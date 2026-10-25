@@ -1,0 +1,31 @@
+newmtl vehicle_door
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/vehicle_door.png
+
+newmtl vehicle_door_black
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/vehicle_door_black.png
+
+newmtl vehicle_door_blue
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/vehicle_door_blue.png
+
+newmtl vehicle_door_red
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/vehicle_door_red.png

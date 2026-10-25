@@ -1,0 +1,193 @@
+{
+  "door.transition_seal_open": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/transition_seal_open",
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.alarm6": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/alarm6",
+        "stream": true,
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.lever": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/lever",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.sliding_door_opening": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/sliding_door_opening",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.sliding_door_opened": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/sliding_door_opened",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.sliding_door_shut": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/sliding_door_shut",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.sliding_seal_open": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/sliding_seal_open",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.sliding_seal_stop": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/sliding_seal_stop",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.garage_move": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/garage_move",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.garage_stop": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/garage_stop",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.qe_sliding_opening": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/qe_sliding_opening",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.qe_sliding_opened": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/qe_sliding_opened",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.qe_sliding_shut": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/qe_sliding_shut",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.wgh_start": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/wgh_start",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.wgh_stop": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/wgh_stop",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.wgh_big_start": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/wgh_big_start",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "door.wgh_big_stop": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:door/wgh_big_stop",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "block.reactor_start": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:block/reactor_start",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "block.reactor_stop": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:block/reactor_stop",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "block.vault_scrape_new": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:block/vault_scrape_new",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "block.vault_thud_new": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "gfbs_doors:block/vault_thud_new",
+        "attenuation_distance": 64
+      }
+    ]
+  }
+}

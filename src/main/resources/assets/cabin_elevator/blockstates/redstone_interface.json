@@ -1,0 +1,11 @@
+{
+  "multipart": [
+    { "apply": { "model": "cabin_elevator:block/redstone_interface" } },
+    { "when": { "north": "true" }, "apply": { "model": "cabin_elevator:block/redstone_interface_face" } },
+    { "when": { "east": "true" }, "apply": { "model": "cabin_elevator:block/redstone_interface_face", "y": 90 } },
+    { "when": { "south": "true" }, "apply": { "model": "cabin_elevator:block/redstone_interface_face", "y": 180 } },
+    { "when": { "west": "true" }, "apply": { "model": "cabin_elevator:block/redstone_interface_face", "y": 270 } },
+    { "when": { "up": "true" }, "apply": { "model": "cabin_elevator:block/redstone_interface_face", "x": 270 } },
+    { "when": { "down": "true" }, "apply": { "model": "cabin_elevator:block/redstone_interface_face", "x": 90 } }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "cabin_elevator:block/caller_side",
+    "side": "cabin_elevator:block/caller_side",
+    "front": "cabin_elevator:block/caller_front"
+  }
+}

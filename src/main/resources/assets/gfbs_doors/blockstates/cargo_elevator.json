@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "core=false": {
+      "model": "gfbs_doors:block/cargo_elevator"
+    },
+    "core=true": {
+      "model": "gfbs_doors:block/cargo_elevator"
+    }
+  }
+}

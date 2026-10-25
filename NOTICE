@@ -1,0 +1,12 @@
+GFBS: Doors
+Copyright (C) 2026 LytharaLab
+
+This mod is licensed under the GNU Lesser General Public License v3.0.
+See LICENSE and LICENSE.LESSER.
+
+Door models, textures and sound effects are ported from HBM's Nuclear Tech Mod
+(NTM) 1.0.27, which is licensed under the GNU Lesser General Public License v3.0.
+Original PHEO door models and assets are credited to their respective authors.
+
+This mod depends on GFBS: glTF (MIT License), developed by LytharaLab.
+GFBS: glTF is not bundled with this mod.

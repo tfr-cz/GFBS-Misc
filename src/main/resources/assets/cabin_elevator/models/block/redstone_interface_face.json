@@ -1,0 +1,19 @@
+{
+  "textures": {
+    "all": "cabin_elevator:block/interface_port"
+  },
+  "elements": [
+    {
+      "from": [2, 2, -0.6],
+      "to": [14, 14, 0.4],
+      "faces": {
+        "north": { "texture": "#all", "uv": [0, 0, 16, 16] },
+        "south": { "texture": "#all", "uv": [0, 0, 16, 16] },
+        "east": { "texture": "#all", "uv": [0, 0, 16, 1] },
+        "west": { "texture": "#all", "uv": [0, 0, 16, 1] },
+        "up": { "texture": "#all", "uv": [0, 0, 16, 1] },
+        "down": { "texture": "#all", "uv": [0, 0, 16, 1] }
+      }
+    }
+  ]
+}

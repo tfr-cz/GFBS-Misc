@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "cabin_elevator:elevator_controller",
+    "cabin_elevator:elevator_caller",
+    "cabin_elevator:redstone_interface"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cabin_elevator:block/elevator_controller" },
+    "facing=east": { "model": "cabin_elevator:block/elevator_controller", "y": 90 },
+    "facing=south": { "model": "cabin_elevator:block/elevator_controller", "y": 180 },
+    "facing=west": { "model": "cabin_elevator:block/elevator_controller", "y": 270 }
+  }
+}

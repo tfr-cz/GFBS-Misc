@@ -1,0 +1,13 @@
+.gradle/
+build/
+run/
+out/
+logs/
+*.log
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+libs/gfbs_gltf-*.jar
