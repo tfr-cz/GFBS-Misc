@@ -1,0 +1,31 @@
+{
+  "replace": false,
+  "values": [
+    "gfbs_doors:transition_seal",
+    "gfbs_doors:vault_door",
+    "gfbs_doors:sliding_blast_door",
+    "gfbs_doors:fire_door",
+    "gfbs_doors:silo_hatch",
+    "gfbs_doors:silo_hatch_large",
+    "gfbs_doors:secure_access_door",
+    "gfbs_doors:large_vehicle_door",
+    "gfbs_doors:qe_containment",
+    "gfbs_doors:qe_sliding_door",
+    "gfbs_doors:round_airlock_door",
+    "gfbs_doors:sliding_seal_door",
+    "gfbs_doors:water_door",
+    "gfbs_doors:reactor_door",
+    "gfbs_doors:cargo_door",
+    "gfbs_doors:blast_door",
+    "gfbs_doors:vault_door_large",
+    "gfbs_doors:large_vehicle_door_large",
+    "gfbs_doors:fire_door_large",
+    "gfbs_doors:sliding_blast_door_large",
+    "gfbs_doors:round_airlock_door_large",
+    "gfbs_doors:qe_containment_large",
+    "gfbs_doors:water_door_large",
+    "gfbs_doors:secure_access_door_large",
+    "gfbs_doors:door_frame",
+    "gfbs_doors:door_frame_tone"
+  ]
+}

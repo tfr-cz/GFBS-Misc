@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=north,core=true": {
+      "model": "gfbs_doors:block/silo_hatch"
+    },
+    "facing=north,core=false": {
+      "model": "gfbs_doors:block/silo_hatch"
+    },
+    "facing=south,core=true": {
+      "model": "gfbs_doors:block/silo_hatch"
+    },
+    "facing=south,core=false": {
+      "model": "gfbs_doors:block/silo_hatch"
+    },
+    "facing=west,core=true": {
+      "model": "gfbs_doors:block/silo_hatch"
+    },
+    "facing=west,core=false": {
+      "model": "gfbs_doors:block/silo_hatch"
+    },
+    "facing=east,core=true": {
+      "model": "gfbs_doors:block/silo_hatch"
+    },
+    "facing=east,core=false": {
+      "model": "gfbs_doors:block/silo_hatch"
+    }
+  }
+}

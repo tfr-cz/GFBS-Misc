@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "gfbs_doors:block/door_frame_tone"
+  }
+}

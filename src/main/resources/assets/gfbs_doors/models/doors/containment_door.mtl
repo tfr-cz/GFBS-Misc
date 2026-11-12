@@ -1,0 +1,23 @@
+newmtl containment_door
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/containment_door.png
+
+newmtl containment_door_trefoil
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/containment_door_trefoil.png
+
+newmtl containment_door_trefoil_yellow
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/containment_door_trefoil_yellow.png

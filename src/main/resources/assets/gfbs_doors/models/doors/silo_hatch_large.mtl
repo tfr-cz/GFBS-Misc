@@ -1,0 +1,7 @@
+newmtl silo_hatch_large
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/silo_hatch_large.png

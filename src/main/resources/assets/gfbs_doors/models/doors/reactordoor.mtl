@@ -1,0 +1,71 @@
+newmtl reactordoor
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/reactordoor.png
+
+newmtl reactordoor_trefoilless
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/reactordoor_trefoilless.png
+
+newmtl reactordoor_yellow
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/reactordoor_yellow.png
+
+newmtl reactordoor_gray
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/reactordoor_gray.png
+
+newmtl reactordoor_gray_trefoilless
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/reactordoor_gray_trefoilless.png
+
+newmtl reactordoor_but_grayer
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/reactordoor_but_grayer.png
+
+newmtl reactordoor_geen_trefoilless
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/reactordoor_geen_trefoilless.png
+
+newmtl reactordoor_frame_a
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/reactordoor_frame_a.png
+
+newmtl reactordoor_frame_b
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/reactordoor_frame_b.png
