@@ -50,22 +50,22 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
         MeshDefinition mesh = baseMesh();
         PartDefinition head = mesh.getRoot().getChild("head");
         head.addOrReplaceChild("hood", boxes(TRIM_U, TRIM_V)
-            .addBox(-5.0F, -9.0F, -5.0F, 10.0F, 3.0F, 10.0F)      // top shell
-            .addBox(-5.0F, -6.0F, -5.0F, 1.0F, 6.0F, 10.0F)       // left wall
-            .addBox(4.0F, -6.0F, -5.0F, 1.0F, 6.0F, 10.0F)        // right wall
-            .addBox(-5.0F, -6.0F, 2.5F, 10.0F, 6.0F, 2.5F)        // back wall
-            .addBox(-1.2F, -10.8F, -1.2F, 2.4F, 2.0F, 2.4F),      // top knob
+            .addBox(-5.8F, -9.0F, -5.8F, 11.5F, 3.4F, 11.5F)      // top shell
+            .addBox(-5.8F, -5.6F, -5.8F, 1.1F, 6.7F, 11.5F)       // left wall
+            .addBox(4.6F, -5.6F, -5.8F, 1.1F, 6.7F, 11.5F)        // right wall
+            .addBox(-5.8F, -5.6F, 2.9F, 11.5F, 6.7F, 2.9F)        // back wall
+            .addBox(-1.4F, -11.0F, -1.4F, 2.8F, 2.2F, 2.8F),      // top knob
             PartPose.ZERO);
         head.addOrReplaceChild("face", boxes(DARK_U, DARK_V)
-            .addBox(-4.6F, -7.4F, -5.7F, 9.2F, 1.4F, 1.4F)        // visor top bar
-            .addBox(-4.6F, -1.8F, -5.7F, 9.2F, 1.8F, 11.4F)       // chin guard
-            .addBox(-5.6F, -5.6F, -1.6F, 0.6F, 1.0F, 1.0F)        // vents
-            .addBox(-5.6F, -5.6F, 1.2F, 0.6F, 1.0F, 1.0F)
-            .addBox(5.0F, -5.6F, -1.6F, 0.6F, 1.0F, 1.0F)
-            .addBox(5.0F, -5.6F, 1.2F, 0.6F, 1.0F, 1.0F),
+            .addBox(-5.3F, -7.2F, -6.6F, 10.6F, 1.6F, 1.6F)        // visor top bar
+            .addBox(-5.3F, -0.9F, -6.6F, 10.6F, 2.0F, 13.1F)       // chin guard
+            .addBox(-6.4F, -5.2F, -1.8F, 0.7F, 1.1F, 1.1F)        // vents
+            .addBox(-6.4F, -5.2F, 1.4F, 0.7F, 1.1F, 1.1F)
+            .addBox(5.8F, -5.2F, -1.8F, 0.7F, 1.1F, 1.1F)
+            .addBox(5.8F, -5.2F, 1.4F, 0.7F, 1.1F, 1.1F),
             PartPose.ZERO);
         head.addOrReplaceChild("lamp", boxes(ACCENT_U, ACCENT_V)
-            .addBox(-1.6F, -8.4F, -6.2F, 3.2F, 1.8F, 1.0F),
+            .addBox(-1.8F, -8.3F, -7.1F, 3.7F, 2.0F, 1.1F),
             PartPose.ZERO);
         return LayerDefinition.create(mesh, 128, 128);
     }
@@ -75,39 +75,39 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
         MeshDefinition mesh = baseMesh();
         PartDefinition body = mesh.getRoot().getChild("body");
         body.addOrReplaceChild("torso", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(-4.5F, -0.5F, -2.5F, 9.0F, 12.5F, 5.0F),
+            .addBox(-5.2F, -0.6F, -2.9F, 10.3F, 14.0F, 5.8F),
             PartPose.ZERO);
         body.addOrReplaceChild("trim", boxes(TRIM_U, TRIM_V)
-            .addBox(-5.5F, -0.3F, -5.5F, 11.0F, 2.6F, 11.0F)      // hood ring
-            .addBox(-4.0F, 0.6F, -3.3F, 8.0F, 6.5F, 0.9F)         // chest plate
-            .addBox(-3.2F, 2.0F, 3.2F, 2.6F, 7.0F, 2.6F)          // tanks
-            .addBox(0.6F, 2.0F, 3.2F, 2.6F, 7.0F, 2.6F),
+            .addBox(-6.3F, -0.3F, -6.3F, 12.6F, 2.9F, 12.6F)      // hood ring
+            .addBox(-4.6F, 0.7F, -3.8F, 9.2F, 7.3F, 1.0F)         // chest plate
+            .addBox(-3.7F, 2.2F, 3.7F, 3.0F, 7.8F, 3.0F)          // tanks
+            .addBox(0.7F, 2.2F, 3.7F, 3.0F, 7.8F, 3.0F),
             PartPose.ZERO);
         body.addOrReplaceChild("hardware", boxes(DARK_U, DARK_V)
-            .addBox(-4.7F, 10.6F, -2.7F, 9.4F, 1.6F, 5.4F)        // belt
-            .addBox(-4.0F, 1.0F, 2.4F, 8.0F, 9.0F, 1.0F)          // back plate
-            .addBox(-3.2F, 8.8F, 3.2F, 2.6F, 1.0F, 2.6F)          // tank caps
-            .addBox(0.6F, 8.8F, 3.2F, 2.6F, 1.0F, 2.6F),
+            .addBox(-5.4F, 11.9F, -3.1F, 10.8F, 1.8F, 6.2F)        // belt
+            .addBox(-4.6F, 1.1F, 2.8F, 9.2F, 10.1F, 1.1F)          // back plate
+            .addBox(-3.7F, 9.9F, 3.7F, 3.0F, 1.1F, 3.0F)          // tank caps
+            .addBox(0.7F, 9.9F, 3.7F, 3.0F, 1.1F, 3.0F),
             PartPose.ZERO);
 
         mesh.getRoot().getChild("right_arm").addOrReplaceChild("sleeve", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(-3.4F, -1.6F, -2.4F, 4.4F, 9.0F, 4.8F),
+            .addBox(-3.9F, -3.0F, -2.8F, 5.1F, 10.1F, 5.5F),
             PartPose.ZERO);
         mesh.getRoot().getChild("right_arm").addOrReplaceChild("pad", boxes(TRIM_U, TRIM_V)
-            .addBox(-4.6F, -3.0F, -2.8F, 5.2F, 3.4F, 5.6F),
+            .addBox(-5.3F, -4.6F, -3.2F, 6.0F, 3.8F, 6.4F),
             PartPose.ZERO);
         mesh.getRoot().getChild("right_arm").addOrReplaceChild("glove", boxes(ACCENT_U, ACCENT_V)
-            .addBox(-3.4F, 6.6F, -2.4F, 4.4F, 3.6F, 4.8F),
+            .addBox(-3.9F, 6.2F, -2.8F, 5.1F, 4.0F, 5.5F),
             PartPose.ZERO);
 
         mesh.getRoot().getChild("left_arm").addOrReplaceChild("sleeve", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(-1.0F, -1.6F, -2.4F, 4.4F, 9.0F, 4.8F),
+            .addBox(-1.1F, -3.0F, -2.8F, 5.1F, 10.1F, 5.5F),
             PartPose.ZERO);
         mesh.getRoot().getChild("left_arm").addOrReplaceChild("pad", boxes(TRIM_U, TRIM_V)
-            .addBox(-0.6F, -3.0F, -2.8F, 5.2F, 3.4F, 5.6F),
+            .addBox(-0.7F, -4.6F, -3.2F, 6.0F, 3.8F, 6.4F),
             PartPose.ZERO);
         mesh.getRoot().getChild("left_arm").addOrReplaceChild("glove", boxes(ACCENT_U, ACCENT_V)
-            .addBox(-1.0F, 6.6F, -2.4F, 4.4F, 3.6F, 4.8F),
+            .addBox(-1.1F, 6.2F, -2.8F, 5.1F, 4.0F, 5.5F),
             PartPose.ZERO);
         return LayerDefinition.create(mesh, 128, 128);
     }
@@ -126,11 +126,11 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
     private static void legBoxes(MeshDefinition mesh, String part) {
         PartDefinition leg = mesh.getRoot().getChild(part);
         leg.addOrReplaceChild("thigh", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(-2.6F, 0.0F, -2.6F, 5.2F, 7.0F, 5.2F)
-            .addBox(-2.3F, 7.4F, -2.3F, 4.6F, 1.2F, 4.6F),
+            .addBox(-2.4F, -1.4F, -3.0F, 4.8F, 7.8F, 6.0F)
+            .addBox(-2.2F, 6.8F, -2.6F, 4.4F, 1.3F, 5.3F),
             PartPose.ZERO);
         leg.addOrReplaceChild("knee", boxes(TRIM_U, TRIM_V)
-            .addBox(-2.8F, 6.2F, -3.1F, 5.6F, 1.4F, 1.6F),
+            .addBox(-2.6F, 5.5F, -3.6F, 5.2F, 1.6F, 1.8F),
             PartPose.ZERO);
     }
 
@@ -145,11 +145,11 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
     private static void bootBoxes(MeshDefinition mesh, String part) {
         PartDefinition leg = mesh.getRoot().getChild(part);
         leg.addOrReplaceChild("boot", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(-2.7F, 8.4F, -2.7F, 5.4F, 3.0F, 5.4F),
+            .addBox(-2.6F, 7.9F, -3.1F, 5.2F, 3.4F, 6.2F),
             PartPose.ZERO);
         leg.addOrReplaceChild("sole", boxes(TRIM_U, TRIM_V)
-            .addBox(-2.8F, 8.1F, -2.8F, 5.6F, 0.7F, 5.6F)         // cuff
-            .addBox(-2.9F, 11.2F, -3.9F, 5.8F, 1.3F, 6.9F),       // sole
+            .addBox(-2.7F, 7.6F, -3.2F, 5.4F, 0.8F, 6.4F)         // cuff
+            .addBox(-2.8F, 11.0F, -4.5F, 5.6F, 1.5F, 7.9F),       // sole
             PartPose.ZERO);
     }
 
