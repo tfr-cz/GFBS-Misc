@@ -91,23 +91,23 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             PartPose.ZERO);
 
         mesh.getRoot().getChild("right_arm").addOrReplaceChild("sleeve", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(-3.9F, -3.0F, -2.8F, 5.1F, 10.1F, 5.5F),
+            .addBox(-4.2F, -3.0F, -3.1F, 5.8F, 10.1F, 6.2F),
             PartPose.ZERO);
         mesh.getRoot().getChild("right_arm").addOrReplaceChild("pad", boxes(TRIM_U, TRIM_V)
             .addBox(-5.3F, -4.6F, -3.2F, 6.0F, 3.8F, 6.4F),
             PartPose.ZERO);
         mesh.getRoot().getChild("right_arm").addOrReplaceChild("glove", boxes(ACCENT_U, ACCENT_V)
-            .addBox(-3.9F, 6.2F, -2.8F, 5.1F, 4.0F, 5.5F),
+            .addBox(-4.2F, 6.2F, -3.1F, 5.8F, 4.0F, 6.2F),
             PartPose.ZERO);
 
         mesh.getRoot().getChild("left_arm").addOrReplaceChild("sleeve", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(-1.1F, -3.0F, -2.8F, 5.1F, 10.1F, 5.5F),
+            .addBox(-1.6F, -3.0F, -3.1F, 5.8F, 10.1F, 6.2F),
             PartPose.ZERO);
         mesh.getRoot().getChild("left_arm").addOrReplaceChild("pad", boxes(TRIM_U, TRIM_V)
             .addBox(-0.7F, -4.6F, -3.2F, 6.0F, 3.8F, 6.4F),
             PartPose.ZERO);
         mesh.getRoot().getChild("left_arm").addOrReplaceChild("glove", boxes(ACCENT_U, ACCENT_V)
-            .addBox(-1.1F, 6.2F, -2.8F, 5.1F, 4.0F, 5.5F),
+            .addBox(-1.6F, 6.2F, -3.1F, 5.8F, 4.0F, 6.2F),
             PartPose.ZERO);
         return LayerDefinition.create(mesh, 128, 128);
     }
