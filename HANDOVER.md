@@ -43,7 +43,28 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 
 - 门 24 种：16 种原尺寸 + 8 种大号（`vault / large_vehicle / fire / sliding_blast / round_airlock / qe_containment / water / secure_access` 各带 `_large`）。
 - 装饰方块 2 种：`door_frame`（门框）、`door_frame_tone`（同色系门框）。
-- 中英语言键各 90 条。
+- 防护服 4 件：`hazmat_helmet` / `hazmat_chest` / `hazmat_legs` / `hazmat_boots`（见下节）。
+- 中英语言键各 94 条。
+
+## 防护服（HBM 风格四件套）
+
+按 HBM 动力装甲的做法实现，映射到 1.20.1 的护甲渲染管线：
+
+| HBM（1.7.10） | 本工程（1.20.1） |
+| --- | --- |
+| 每个套装一个 `ModelArmorXxx extends ModelBiped`，按槽位 `type` 画不同部件 | `HazmatArmorModel extends HumanoidModel`，四个槽位各一个 `LayerDefinition`（`helmet/chest/legs/boots`） |
+| `setRotationAngles` 里 `copyPropertiesFromBiped` 从玩家模型偷姿势 | Forge 的 `IClientItemExtensions#getGenericArmorModel` 自动 `copyProperties`（姿势 + 部件可见性），我们只返回自己的模型 |
+| 每槽一套贴图（helmet/chest/arm/leg） | `HazmatArmorItem#getArmorTexture` 每槽返回 `textures/armor/hazmat_<piece>.png` |
+| OBJ 命名组 + 逐组 bindTexture | `CubeListBuilder.addBox` 的盒子几何 + 128×128 贴图的四个纯色 64×64 象限（primary/trim/dark/accent） |
+| 高亮层二次全亮渲染 | 暂未做（头盔灯的盒子留在 `accent` 象限，后续可加 `RenderType.eyes` 覆盖层） |
+
+实现要点：
+
+- 一件护甲 = 一个 `ArmorItem`（`HazmatArmorItem`）+ 一套材质（`HazmatArmorMaterial`：护甲 2/7/5/2、耐久基数 20、韧性 0.5、皮革修）。
+- 模型只声明**七个标准部件名**（head/hat/body/right_arm/left_arm/right_leg/left_leg），未用到的留空；槽位填哪些盒子见 `HazmatArmorModel`。
+- 模型实例按槽位缓存（`HazmatArmorModels`），共享给所有玩家——因为每次渲染 Forge 都会把玩家姿势+可见性重新拷进来。
+- 贴图坐标：`texOffs(0,0)=primary`、`(64,0)=trim`、`(0,64)=dark`、`(64,64)=accent`；盒子 UV 展开尺寸（`2*(w+d) × (h+d)`）必须落在 64×64 象限内，目前最大 44×13.5。
+- 预览：`build/reports/hazmat-preview.png`（由 `F:\DSH\work\preview_hazmat.py` 直接解析模型源码生成的正交示意图，只用于比例自查，不是实机渲染）。
 
 ## 门调节器（新 UI）
 
@@ -67,6 +88,7 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 
 1. **注释与一部分局部变量名在反编译中丢失**（见 BASELINE.md）；语义等价，但可读性弱于手写源码。
 2. `DoorConfigSnapshot.elevator` 是死字段（本线无货梯）。
-3. 文档缺口：README / 介绍文档 / 旧 HANDOVER 里的货梯、客梯章节都不适用于本线，需要另写。
+3. 文档缺口：README / 介绍文档 / 旧 HANDOVER 里的货梯、客梯章节都不适用本线，需要另写。
 4. 本工程尚未做版本管理初始化（`git init` 由接手者执行；`.gitignore` 已就位）。
 5. 反编译产物里保留了部分 `(Type)obj` 强转和 `varN` 局部名；重构时顺手清理，但不要为了"好看"改动逻辑。
+6. 防护服目前是**纯几何粗模**：颜色靠贴图象限纯色，没有高光/磨损细节；头盔灯没有自发光层；只有玩家能显示（其他生物没接渲染层）。

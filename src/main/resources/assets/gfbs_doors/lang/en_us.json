@@ -88,5 +88,9 @@
   "tooltip.gfbs_doors.configurator_hint": "Use the Door Configurator on a door or cargo elevator to change its redstone mode",
   "tooltip.gfbs_doors.door_configurator.1": "Right-click a door or a cargo elevator to set its redstone mode and manual control",
   "tooltip.gfbs_doors.door_configurator.2": "Changes apply immediately",
-  "tooltip.gfbs_doors.redstone": "Right-click to open or close"
+  "tooltip.gfbs_doors.redstone": "Right-click to open or close",
+  "item.gfbs_doors.hazmat_helmet": "Hazmat Helmet",
+  "item.gfbs_doors.hazmat_chest": "Hazmat Chestplate",
+  "item.gfbs_doors.hazmat_legs": "Hazmat Leggings",
+  "item.gfbs_doors.hazmat_boots": "Hazmat Boots"
 }

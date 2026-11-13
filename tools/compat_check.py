@@ -73,7 +73,8 @@ ALLOWED_DATA_NAMESPACES = {"gfbs_doors", "minecraft"}
 
 # Recipes under data/gfbs_doors may produce door ids, plus these non-door
 # items.  door_frame / door_frame_tone are normal blocks that are not DoorSpecs.
-KNOWN_RECIPE_ITEMS = {"door_configurator", "door_frame", "door_frame_tone"}
+KNOWN_RECIPE_ITEMS = {"door_configurator", "door_frame", "door_frame_tone",
+                       "hazmat_helmet", "hazmat_chest", "hazmat_legs", "hazmat_boots"}
 
 # The doors-only line has no cabin elevator; the constant is kept so the pickaxe
 # completeness check keeps working without a second code path.

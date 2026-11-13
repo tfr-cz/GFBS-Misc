@@ -4,15 +4,15 @@
     "data_namespaces": 2,
     "door_blockstates": 26,
     "door_ids": 24,
-    "door_recipes": 26,
+    "door_recipes": 30,
     "java_namespaces": 2,
     "java_resource_location_calls": 4,
     "mod_annotations": 1,
     "namespace_constants": 2,
     "network_channels": 1,
     "pickaxe_entries": 26,
-    "recipe_files": 26,
-    "recipe_gfbs_doors_results": 26,
+    "recipe_files": 30,
+    "recipe_gfbs_doors_results": 30,
     "required_pickaxe_entries": 24
   },
   "door_id_count": 24,
@@ -50,7 +50,11 @@
   "known_recipe_items": [
     "door_configurator",
     "door_frame",
-    "door_frame_tone"
+    "door_frame_tone",
+    "hazmat_boots",
+    "hazmat_chest",
+    "hazmat_helmet",
+    "hazmat_legs"
   ],
   "namespace_constants": {
     "gfbs_doors": {
@@ -99,6 +103,10 @@
     "gfbs_doors:door_frame_tone",
     "gfbs_doors:fire_door",
     "gfbs_doors:fire_door_large",
+    "gfbs_doors:hazmat_boots",
+    "gfbs_doors:hazmat_chest",
+    "gfbs_doors:hazmat_helmet",
+    "gfbs_doors:hazmat_legs",
     "gfbs_doors:large_vehicle_door",
     "gfbs_doors:large_vehicle_door_large",
     "gfbs_doors:qe_containment",

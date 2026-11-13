@@ -24,6 +24,10 @@ public final class ModCreativeTabs {
                     output.accept((ItemLike)ModItems.DOOR_FRAME_ITEM.get());
                     output.accept((ItemLike)ModItems.DOOR_FRAME_TONE_ITEM.get());
                     output.accept((ItemLike)ModItems.DOOR_CONFIGURATOR.get());
+                    output.accept((ItemLike)ModItems.HAZMAT_HELMET.get());
+                    output.accept((ItemLike)ModItems.HAZMAT_CHEST.get());
+                    output.accept((ItemLike)ModItems.HAZMAT_LEGS.get());
+                    output.accept((ItemLike)ModItems.HAZMAT_BOOTS.get());
                 })
                 .build()
     );

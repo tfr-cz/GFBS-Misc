@@ -88,5 +88,9 @@
   "tooltip.gfbs_doors.configurator_hint": "手持门调节器右键门或货梯可调整红石模式",
   "tooltip.gfbs_doors.door_configurator.1": "右键门或货梯：设置红石模式与手动控制",
   "tooltip.gfbs_doors.door_configurator.2": "选项立即生效",
-  "tooltip.gfbs_doors.redstone": "右键开启 / 关闭"
+  "tooltip.gfbs_doors.redstone": "右键开启 / 关闭",
+  "item.gfbs_doors.hazmat_helmet": "防护服头盔",
+  "item.gfbs_doors.hazmat_chest": "防护服胸甲",
+  "item.gfbs_doors.hazmat_legs": "防护服护腿",
+  "item.gfbs_doors.hazmat_boots": "防护服靴子"
 }
