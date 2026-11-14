@@ -76,7 +76,7 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 - 手套比袖筒内缩 0.08（x/z 都缩）——它原来和袖筒共用同一组侧面，两层共面就是手腕处那种一闪一闪的来源。
 - 共面检查：`tools/audit_model.py`（= `F:\DSH\workudit_hazmat.py`）报同一个 mesh 里**同向**共面的面对（背面剔除会吃掉反向的那一类，所以只查同向）；`tools/fix_model_overlaps.py`（= `F:\DSH\workix_overlaps.py`）把撞车盒子里体积较小的那个面内移 0.06 直到清零；两个脚本都可以在仓库根直接跑。改完几何必须跑这两个，`problems: 0` 才提交。
 - **HBM 路线：护甲即本体**（`HazmatBodyReplacement`，原来叫 `HazmatSkinLayers`）分两条规则：
-  - **整套穿齐**（头盔+胸甲+护腿+靴子都是本模组的）：隐藏**所有**玩家模型部件（含 `head` 和外层 `hat/jacket/sleeves/pants`）。早先想留 `head` 让潜行服玻璃后面能看见脸，但“甲里飘着一张脸”会被当成“玩家没被隐藏”，所以现在连头一起隐藏。
+  - **整套穿齐**（头盔+胸甲+护腿+靴子都是本模组的）：隐藏**所有**玩家模型部件和外层，但**潜行服的头不隐藏**（`glassVisor = 头盔是 HazmatArmorItem` → `head.visible = !glassVisor`）。因为潜行服视窗是透明玻璃、脸是设计的一部分；T-51b 头盔是封闭的，头照常隐藏。
   - **只穿一部分**：仍按覆盖范围逐件隐藏（头盔→`hat`；胸甲→`body`+双臂+外层；护腿：动力甲包整条腿单独就隐藏，潜行服护腿要和靴子一起才隐藏腿），否则会出现"可见的胳膊之间夹着不可见的躯干"。
 - 为什么隐藏本体不会把套装一起隐藏：Forge 的护甲渲染是 `getParentModel().copyPropertiesTo(护甲层的双足模型)` → `setPartVisibility(slot)` → `getArmorModelHook()` → `copyModelProperties(护甲层双足模型, 我们的模型)`。可见性来源是 `setPartVisibility`，**不是**玩家模型的部件，所以玩家本体隐藏与套装无关。
 - 副作用（都接受，因为本线不再考虑与其他东西共存）：皮肤双层、`skinlayers3d` 的 3D 皮肤自动关闭（它的网格以基础部件可见为前提）；披风/鞘翅仍会盖在套装外面（1.20.1 里 cape/ear 由各自的 layer 和模型部件渲染，不在 `PlayerModel` 上）；僵尸等非玩家生物穿这套仍会与本体互穿（本逻辑只挂在 `RenderPlayerEvent`）。

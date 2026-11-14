@@ -19,9 +19,9 @@ import java.util.WeakHashMap;
 /**
  * Hides the player's own model entirely while a suit is worn.
  *
- * <p>The player is hidden whole: head included. Leaving the head in was an experiment so the hazmat
- * visor would show a face through its glass, but a bare face floating inside the helmet reads as "the
- * player is not hidden", which is what it got reported as.</p>
+ * <p>One exception to "hide the player": the head under the hazmat helmet stays, because that suit's
+ * visor is glass and the face behind it is part of the design. The T-51b helmet is closed, so its head
+ * is hidden with the rest.</p>
  *
  * <p>Two rules:</p>
  * <ul>
@@ -66,6 +66,9 @@ public final class HazmatBodyReplacement {
         boolean chestplate = ours(player, EquipmentSlot.CHEST);
         boolean leggings = ours(player, EquipmentSlot.LEGS);
         boolean boots = ours(player, EquipmentSlot.FEET);
+        // The hazmat visor is glass and is supposed to show the face behind it, so that head stays.
+        // The T-51b helmet is closed, so its head is hidden like the rest of the body.
+        boolean glassVisor = ours(player, EquipmentSlot.HEAD, HazmatArmorItem.class);
 
         if (!(helmet || chestplate || leggings)) {
             if (SUPPRESSED.remove(player)) {
@@ -76,10 +79,9 @@ public final class HazmatBodyReplacement {
         }
 
         if (helmet && chestplate && leggings && boots) {
-            // Full set: the whole player goes away - head included. A floating face behind a visor reads
-            // as "the player is not hidden", which is exactly what was reported, so the suit is the only
-            // thing left in the scene.
-            model.head.visible = false;
+            // Full set: the player goes away, except the head under a glass visor - the hazmat suit is
+            // designed to show its face through the pane, while a closed helmet shows nothing anyway.
+            model.head.visible = !glassVisor;
             model.hat.visible = false;
             model.body.visible = false;
             model.rightArm.visible = false;
@@ -95,7 +97,7 @@ public final class HazmatBodyReplacement {
             // Partial wear: only hide what the worn pieces really cover, otherwise the player would be
             // left with invisible limbs between two visible ones.
             if (helmet) {
-                model.head.visible = false;
+                model.head.visible = !glassVisor;
                 model.hat.visible = false;
             }
             if (chestplate) {
