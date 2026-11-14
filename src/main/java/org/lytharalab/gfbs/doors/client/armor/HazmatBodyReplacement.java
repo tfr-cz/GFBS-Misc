@@ -19,6 +19,10 @@ import java.util.WeakHashMap;
 /**
  * Hides the player's own model entirely while a suit is worn.
  *
+ * <p>The player is hidden whole: head included. Leaving the head in was an experiment so the hazmat
+ * visor would show a face through its glass, but a bare face floating inside the helmet reads as "the
+ * player is not hidden", which is what it got reported as.</p>
+ *
  * <p>Two rules:</p>
  * <ul>
  *   <li><b>Full set worn</b> - the whole player model is hidden, base layer and outer layer alike. The
@@ -72,9 +76,10 @@ public final class HazmatBodyReplacement {
         }
 
         if (helmet && chestplate && leggings && boots) {
-            // Full set: take the body away so nothing can swing through the armour at speed. The head
-            // stays because the hazmat visor is glass and the face is meant to be visible through it;
-            // it moves with the head part exactly like the hood does, so it cannot clip either.
+            // Full set: the whole player goes away - head included. A floating face behind a visor reads
+            // as "the player is not hidden", which is exactly what was reported, so the suit is the only
+            // thing left in the scene.
+            model.head.visible = false;
             model.hat.visible = false;
             model.body.visible = false;
             model.rightArm.visible = false;
@@ -90,6 +95,7 @@ public final class HazmatBodyReplacement {
             // Partial wear: only hide what the worn pieces really cover, otherwise the player would be
             // left with invisible limbs between two visible ones.
             if (helmet) {
+                model.head.visible = false;
                 model.hat.visible = false;
             }
             if (chestplate) {

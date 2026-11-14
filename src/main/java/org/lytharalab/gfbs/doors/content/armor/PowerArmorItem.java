@@ -1,6 +1,7 @@
 package org.lytharalab.gfbs.doors.content.armor;
 
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
@@ -8,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.lytharalab.gfbs.doors.client.armor.EmptyArmorModel;
 
+import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
 /**
@@ -21,6 +23,16 @@ import java.util.function.Consumer;
 public final class PowerArmorItem extends ArmorItem {
     public PowerArmorItem(ArmorItem.Type type, Properties properties) {
         super(HazmatArmorMaterial.INSTANCE, type, properties);
+    }
+
+    /**
+     * Never drawn: the vanilla layer renders {@code EmptyArmorModel} for these pieces. It still resolves a
+     * texture though, so point it at one that exists instead of letting it ask for a
+     * {@code textures/models/armor/<material>_layer_1.png} sheet that was never shipped.
+     */
+    @Override
+    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, @Nullable String type) {
+        return "gfbs_doors:textures/armor/hazmat_chest.png";
     }
 
     @Override

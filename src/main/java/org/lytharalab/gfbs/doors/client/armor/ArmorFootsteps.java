@@ -40,12 +40,14 @@ import java.util.WeakHashMap;
     value = {Dist.CLIENT}
 )
 public final class ArmorFootsteps {
-    /** Blocks per step; vanilla's stride lands close to this, so the beats line up with the walk. */
-    private static final double STRIDE = 1.55D;
-    /** Below this much movement per tick the player is not walking, just shuffling in place. */
-    private static final double MIN_STEP_MOVEMENT = 0.01D;
+    /** Blocks per step, converted to walkDist units: Entity#move adds 0.6 per block walked. */
+    private static final double BLOCKS_PER_STEP = 1.55D;
+    private static final float STEP_UNITS = (float) (BLOCKS_PER_STEP * 0.6D);
+    /** A jump this large is a teleport, not a stride; drop it instead of firing a step. */
+    private static final float MAX_STRIDE_DELTA = 4.0F;
 
-    private static final Map<Player, Double> WALKED = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<Player, Float> LAST_WALK = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<Player, Float> PENDING = Collections.synchronizedMap(new WeakHashMap<>());
 
     private ArmorFootsteps() {
     }
@@ -63,28 +65,34 @@ public final class ArmorFootsteps {
             return;
         }
 
+        // Entity.xo is only written on teleports in 1.20.1 (absMoveTo/moveTo), so a per-tick
+        // "getX() - xo" delta is almost always zero - which is why this never fired. walkDist is the
+        // stride counter Entity#move actually moves, so it is the right thing to read.
+        float walked = player.walkDist;
+        Float previous = LAST_WALK.put(player, walked);
+
         Suit suit = suitOf(player);
-        if (suit == null) {
-            WALKED.remove(player);
+        if (suit == null || !onFoot(player)) {
+            PENDING.put(player, 0.0F);
             return;
         }
-        if (!onFoot(player)) {
-            WALKED.remove(player);
-            return;
-        }
-
-        double dx = player.getX() - player.xo;
-        double dz = player.getZ() - player.zo;
-        double moved = Math.sqrt(dx * dx + dz * dz);
-        if (moved < MIN_STEP_MOVEMENT) {
+        if (previous == null) {
             return;
         }
 
-        double walked = WALKED.merge(player, moved, Double::sum);
-        if (walked < STRIDE) {
+        float delta = walked - previous;
+        if (delta <= 0.0F || delta > MAX_STRIDE_DELTA) {
+            // Standing still, or the player was moved rather than walked.
+            PENDING.put(player, 0.0F);
             return;
         }
-        WALKED.put(player, walked - STRIDE);
+
+        float pending = PENDING.getOrDefault(player, 0.0F) + delta;
+        if (pending < STEP_UNITS) {
+            PENDING.put(player, pending);
+            return;
+        }
+        PENDING.put(player, pending - STEP_UNITS);
 
         float pitch = 1.0F + (player.getRandom().nextFloat() - 0.5F) * 0.12F;
         player.level().playLocalSound(player.getX(), player.getY(), player.getZ(),
