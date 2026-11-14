@@ -11,6 +11,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 /**
  * Turns off the player's skin overlay everywhere the protective suit covers the body.
  *
@@ -33,8 +37,8 @@ import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
  *
  * <p>The work happens on {@link RenderPlayerEvent.Pre}, which Forge fires right after
  * {@code PlayerRenderer#setModelProperties} re-applies the player's skin toggles, so nothing
- * overwrites it that frame. It is recomputed every frame, so taking a piece off restores the
- * overlay immediately.</p>
+ * overwrites it that frame. Only the covered parts are hidden and nothing is ever forced back on,
+ * so taking a piece off restores the overlay on the next frame by itself.</p>
  */
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(
@@ -42,6 +46,10 @@ import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
     value = {Dist.CLIENT}
 )
 public final class HazmatSkinLayers {
+    /** Players whose 3D meshes we cleared, so they can be rebuilt once the suit comes off. */
+    private static final Set<AbstractClientPlayer> SUPPRESSED =
+        Collections.newSetFromMap(new WeakHashMap<>());
+
     private HazmatSkinLayers() {
     }
 
@@ -55,15 +63,30 @@ public final class HazmatSkinLayers {
         boolean chest = wears(player, EquipmentSlot.CHEST);
         boolean legs = wears(player, EquipmentSlot.LEGS);
 
-        model.hat.visible = !helmet;
-        model.jacket.visible = !chest;
-        model.leftSleeve.visible = !chest;
-        model.rightSleeve.visible = !chest;
-        model.leftPants.visible = !legs;
-        model.rightPants.visible = !legs;
+        // Only ever hide, never show: skinlayers3d hides these same parts itself when it draws its
+        // 3D replacement, and re-showing them would draw the flat overlay on top of the 3D one.
+        // Nothing has to be undone either - setModelProperties re-applies the player's toggles at the
+        // start of every frame.
+        if (helmet) {
+            model.hat.visible = false;
+        }
+        if (chest) {
+            model.jacket.visible = false;
+            model.leftSleeve.visible = false;
+            model.rightSleeve.visible = false;
+        }
+        if (legs) {
+            model.leftPants.visible = false;
+            model.rightPants.visible = false;
+        }
 
         if (helmet || chest || legs) {
-            ThirdPartySkinLayers.drop3dMeshes(player);
+            SUPPRESSED.add(player);
+            ThirdPartySkinLayers.suppress(player);
+        } else if (SUPPRESSED.remove(player)) {
+            // Cleared meshes are never rebuilt on their own: the mod only regenerates them when the
+            // cached skin changes, so forget the cached skin once and let it rebuild from the texture.
+            ThirdPartySkinLayers.invalidate(player);
         }
     }
 

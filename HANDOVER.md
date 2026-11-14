@@ -67,8 +67,8 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 - 贴图坐标（256×256，八色区）：`(0,0)=primary`、`(64,0)=shadow`、`(128,0)=trim`、`(192,0)=dark`、`(0,64)=accent`、`(64,64)=glass`、`(128,64)=metal`、`(192,64)=lamp`；盒子 UV 展开尺寸（`2*(w+d) × (h+d)`）必须落在 64×64 色区内，目前最大 47.8×19.1（领圈 / 胸壳）。色区是纯色的：盒子从 texOffs 起整块采样，色区里画图案只会按随机偏移落在某个面上，所以细节来自几何和材质数量，不靠贴图绘制。
 - 预览：`build/reports/hazmat-preview.png`（由 `F:\DSH\work\preview_hazmat.py` 直接解析模型源码生成的正交示意图，只用于比例自查，不是实机渲染）。
 - 尺寸：整体比早期版本收过一圈（`F:\DSH\work\shrink_hazmat.py` 按部位、按锚点缩放：头/胸 XZ 0.92、Y 0.96；袖臂 XZ 0.90；裤/靴 XZ 0.94；靴子 Y 不动，否则鞋底会离地）。
-- 隐去皮肤外层（`HazmatSkinLayers`）：头盔→`hat`，胸甲→`jacket`+`leftSleeve`/`rightSleeve`，护腿→`leftPants`/`rightPants` 全部置 `visible=false`；**基础部件 head/body/arm/leg 一律不碰**（脸上要透过视窗看见，而且 Forge `copyModelProperties` 会把玩家模型部件可见性拷到护甲模型上，隐藏基础部件会把套装自己一起隐藏）。
-- 3D 皮肤层（skinlayers3d）：它渲染的是自己生成的网格，且判据用的是**基础部件**可见性，所以隐藏外层部件对它无效；改走它自己的 `PlayerSettings#clearMeshes`（`ThirdPartySkinLayers` 用反射调用，mod 不在或改了接口就静默跳过）。清空后下一帧 `SkinUtil.setup3dLayers` 命中皮肤缓存直接返回 false，不会重建网格，因此每帧清空没有性能代价。
+- 隐去皮肤外层（`HazmatSkinLayers`）：头盔→`hat`，胸甲→`jacket`+`leftSleeve`/`rightSleeve`，护腿→`leftPants`/`rightPants` 置 `visible=false`。**只置 false、从不置回 true**（skinlayers3d 自己也会把这些部件隐藏掉换成 3D 几何，我们重新置 true 会叠一层平面外层；恢复靠每帧 `setModelProperties` 自己重设）。**基础部件 head/body/arm/leg 一律不碰**（脸上要透过视窗看见，而且 Forge `copyModelProperties` 会把玩家模型部件可见性拷到护甲模型上，隐藏基础部件会把套装自己一起隐藏）。
+- 3D 皮肤层（skinlayers3d）：它渲染的是自己生成的网格，且判据用的是**基础部件**可见性，所以隐藏外层部件对它无效；改走它自己的 `PlayerSettings#clearMeshes`（`ThirdPartySkinLayers` 反射调用，mod 不在或改了接口就静默跳过）。清空后下一帧 `SkinUtil.setup3dLayers` 命中皮肤缓存直接返回 false，不会重建网格，因此每帧清空没有性能代价；代价是它也**不会自己重建**，所以脱下护甲时（`SUPPRESSED` 弱引用集合里记过）用一次 `setCurrentSkin(null)` 让它在下一帧从贴图重建。
 
 ## 门调节器（新 UI）
 
