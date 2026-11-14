@@ -59,8 +59,10 @@ minecraft {
 repositories {
     mavenCentral()
     maven {
+        // gfbs_gltf lives in a machine-local maven; override with -Pgfbs.localMaven=... on another box.
         name = 'LocalMaven'
-        url = uri('file:///G:/qoder/work/gfbs/local-maven')
+        url = uri(providers.gradleProperty('gfbs.localMaven')
+            .orElse('file:///G:/qoder/work/gfbs/local-maven').get())
     }
     maven {
         name = 'BMCLAPI'
