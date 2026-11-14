@@ -6,6 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
+import com.mojang.blaze3d.systems.RenderSystem;
 import tfar.classicbar.EventHandler;
 import tfar.classicbar.api.BarOverlay;
 import tfar.classicbar.api.BarRegistry;
@@ -42,6 +43,10 @@ public final class ClassicBarPowerBars extends BarOverlayImpl {
         ClassicBarPowerBars::lowestWornCharge,
         player -> (float) PowerArmorCharge.MAX_CHARGE);
 
+    /** {@code -Dgfbs.debug.hud=true} logs the four charges and the layout offset once a second. */
+    private static final boolean DEBUG = Boolean.getBoolean("gfbs.debug.hud");
+    private static long lastLogTick = Long.MIN_VALUE;
+
     private static final Codec<ClassicBarPowerBars> CODEC = RecordCodecBuilder.create(
         instance -> codecStart(instance).apply(instance, ClassicBarPowerBars::new));
 
@@ -66,6 +71,12 @@ public final class ClassicBarPowerBars extends BarOverlayImpl {
 
     @Override
     public void renderBar(ForgeGui gui, GuiGraphics graphics, Player player, int screenWidth, int screenHeight, int vOffset) {
+        // The bars are drawn inside Classic Bar's pass, after other bars have called Color#color2Gl, so pin the
+        // shader colour to white and make sure blending is on: a leftover tint would dim the fill on some frames.
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
         List<ItemStack> armor = player.getInventory().armor;
         int left = screenWidth / 2 - PowerArmorHud.HOTBAR_LEFT_OFFSET;
         for (int index = 0; index < armor.size(); index++) {
@@ -78,6 +89,23 @@ public final class ClassicBarPowerBars extends BarOverlayImpl {
         }
         // Classic Bar adds 10 for the bar it just rendered; the other rows need the rest or they overlap.
         EventHandler.increment(gui, getSide(), PowerArmorHud.ROW_STEP * (ROWS - 1) + 2);
+
+        if (DEBUG) {
+            logOnceASecond(player, armor, vOffset);
+        }
+    }
+
+    private static void logOnceASecond(Player player, List<ItemStack> armor, int vOffset) {
+        long now = player.level().getGameTime();
+        if (now == lastLogTick || (lastLogTick != Long.MIN_VALUE && now - lastLogTick < 20L)) {
+            return;
+        }
+        lastLogTick = now;
+        StringBuilder builder = new StringBuilder("power hud: vOffset=").append(vOffset).append(" charges=");
+        for (ItemStack piece : armor) {
+            builder.append(PowerArmorCharge.isPowerArmor(piece) ? PowerArmorCharge.get(piece) : -1L).append(' ');
+        }
+        org.slf4j.LoggerFactory.getLogger("gfbs_doors").info(builder.toString());
     }
 
     /** The numerator is the emptiest piece, so the bar reads as "how charged is the set". */
