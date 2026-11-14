@@ -1,0 +1,50 @@
+#!/bin/sh
+# Guardrail: the tests and the two checks run before every commit.
+# Enable once per clone:  git config core.hooksPath .githooks
+set -eu
+
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+cd "$ROOT"
+
+# The project needs JDK 17+, and PATH java on this machine is older, so find a suitable one:
+# JAVA_HOME first, then the usual per-platform install roots.
+java_major() {
+    "$1/bin/java" -version 2>&1 | sed -n 's/.*version "\([0-9][0-9]*\).*/\1/p' | head -n 1
+}
+
+pick_java() {
+    for candidate in "${JAVA_HOME:-}" \
+        "/c/Program Files/Microsoft"/jdk-17* \
+        "/c/Program Files/Eclipse Adoptium"/jdk-17* \
+        "/c/Program Files/Java"/jdk-17*; do
+        [ -n "$candidate" ] || continue
+        [ -x "$candidate/bin/java" ] || continue
+        major=$(java_major "$candidate")
+        if [ -n "$major" ] && [ "$major" -ge 17 ]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+if JAVA=$(pick_java); then
+    export JAVA_HOME="$JAVA"
+else
+    echo "[pre-commit] needs a JDK 17+; set JAVA_HOME to one" >&2
+    exit 1
+fi
+
+run() {
+    name=$1
+    shift
+    echo "[pre-commit] $name"
+    if ! "$@"; then
+        echo "[pre-commit] $name FAILED - commit blocked" >&2
+        exit 1
+    fi
+}
+
+run "tests" ./gradlew test --offline --console=plain -q
+run "compatibility" python tools/compat_check.py
+run "null safety" python tools/null_safety_check.py
