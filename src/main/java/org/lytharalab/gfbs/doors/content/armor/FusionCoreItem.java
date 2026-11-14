@@ -17,54 +17,58 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * A one-shot cell that tops up the T-51b set, the stand-in for HBM's {@code armor_battery}.
+ * HBM's {@code fusion_core}, the item that recharges powered armour: {@code ItemFusionCore} in NTM.
  *
- * <p>One cell puts {@link PowerArmorCharge#MAX_CHARGE} into <em>each</em> worn piece - a full set, not a
- * single piece - and is consumed. That is a deliberate departure from NTM, where a battery charged one
- * item and a set needed four of them; this mod ships a single cell item, so four charges per click keeps
- * the loop to one action.</p>
+ * <p>NTM registers it as {@code new ItemFusionCore(2_500_000)} - one core pushes 2.5M HE into every worn
+ * battery piece (each capped at its own max), needs the full set worn, is consumed, and is not stackable.
+ * All four of those are kept here, so one core is a full recharge of a T-51b set and nothing more.</p>
  *
- * <p>Only the pieces being worn are charged. Armour sitting in the inventory keeps whatever it had.</p>
+ * <p>Only the worn pieces are charged; armour sitting in the inventory keeps whatever it had.</p>
  */
-public final class PowerCellItem extends Item {
+public final class FusionCoreItem extends Item {
+    /** The amount HBM's item is constructed with; per worn piece, before the per-piece cap clamps it. */
+    public static final long CHARGE_PER_PIECE = 2_500_000L;
+
     private static final EquipmentSlot[] ARMOR_SLOTS = {
         EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
     };
 
-    public PowerCellItem(Properties properties) {
-        super(properties.stacksTo(16));
+    public FusionCoreItem(Properties properties) {
+        super(properties.stacksTo(1));
     }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-        ItemStack cell = player.getItemInHand(hand);
+        ItemStack core = player.getItemInHand(hand);
         if (!PowerArmorCharge.hasFullSet(player)) {
-            return InteractionResultHolder.fail(cell);
+            return InteractionResultHolder.fail(core);
         }
         if (level.isClientSide) {
-            return InteractionResultHolder.success(cell);
+            return InteractionResultHolder.success(core);
         }
 
         boolean charged = false;
         for (EquipmentSlot slot : ARMOR_SLOTS) {
-            if (PowerArmorCharge.add(player.getItemBySlot(slot), PowerArmorCharge.MAX_CHARGE) > 0L) {
+            if (PowerArmorCharge.add(player.getItemBySlot(slot), CHARGE_PER_PIECE) > 0L) {
                 charged = true;
             }
         }
         if (!charged) {
-            return InteractionResultHolder.fail(cell);
+            return InteractionResultHolder.fail(core);
         }
 
         if (!player.getAbilities().instabuild) {
-            cell.shrink(1);
+            core.shrink(1);
         }
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
             SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.7F, 1.5F);
-        return InteractionResultHolder.success(cell);
+        return InteractionResultHolder.success(core);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.translatable("tooltip.gfbs_doors.power_cell").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.gfbs_doors.fusion_core",
+            PowerArmorCharge.shortNumber(CHARGE_PER_PIECE)).withStyle(ChatFormatting.YELLOW));
+        tooltip.add(Component.translatable("tooltip.gfbs_doors.fusion_core.requires").withStyle(ChatFormatting.GRAY));
     }
 }

@@ -32,7 +32,7 @@ public final class ModCreativeTabs {
                     output.accept((ItemLike)ModItems.POWER_CHEST.get());
                     output.accept((ItemLike)ModItems.POWER_LEGS.get());
                     output.accept((ItemLike)ModItems.POWER_BOOTS.get());
-                    output.accept((ItemLike)ModItems.POWER_CELL.get());
+                    output.accept((ItemLike)ModItems.FUSION_CORE.get());
                 })
                 .build()
     );
