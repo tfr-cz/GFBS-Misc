@@ -55,15 +55,16 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 | 每个套装一个 `ModelArmorXxx extends ModelBiped`，按槽位 `type` 画不同部件 | `HazmatArmorModel extends HumanoidModel`，四个槽位各一个 `LayerDefinition`（`helmet/chest/legs/boots`） |
 | `setRotationAngles` 里 `copyPropertiesFromBiped` 从玩家模型偷姿势 | Forge 的 `IClientItemExtensions#getGenericArmorModel` 自动 `copyProperties`（姿势 + 部件可见性），我们只返回自己的模型 |
 | 每槽一套贴图（helmet/chest/arm/leg） | `HazmatArmorItem#getArmorTexture` 每槽返回 `textures/armor/hazmat_<piece>.png` |
-| OBJ 命名组 + 逐组 bindTexture | `CubeListBuilder.addBox` 的盒子几何 + 128×128 贴图的四个纯色 64×64 象限（primary/trim/dark/accent） |
-| 高亮层二次全亮渲染 | 暂未做（头盔灯的盒子留在 `accent` 象限，后续可加 `RenderType.eyes` 覆盖层） |
+| OBJ 命名组 + 逐组 bindTexture | `CubeListBuilder.addBox` 的盒子几何 + 256×256 贴图的八个纯色 64×64 色区（primary/shadow/trim/dark/accent/glass/metal/lamp） |
+| 高亮层二次全亮渲染 | 暂未做（头盔灯的盒子留在 `lamp` 色区，后续可加 `RenderType.eyes` 覆盖层） |
 
 实现要点：
 
 - 一件护甲 = 一个 `ArmorItem`（`HazmatArmorItem`）+ 一套材质（`HazmatArmorMaterial`：护甲 2/7/5/2、耐久基数 20、韧性 0.5、皮革修）。
 - 模型只声明**七个标准部件名**（head/hat/body/right_arm/left_arm/right_leg/left_leg），未用到的留空；槽位填哪些盒子见 `HazmatArmorModel`。
+- 细节靠**叠壳**而不是一个大盒子：底壳定轮廓 → 略凸出的加强筋/包边 → 五金件（带扣、铆钉、滤毒罐、气瓶阀门）压在最外面，小件 0.3–1.5 单位。当前共 115 个盒子（头 33 / 胸 42 / 腿 20 / 靴 20）。
 - 模型实例按槽位缓存（`HazmatArmorModels`），共享给所有玩家——因为每次渲染 Forge 都会把玩家姿势+可见性重新拷进来。
-- 贴图坐标：`texOffs(0,0)=primary`、`(64,0)=trim`、`(0,64)=dark`、`(64,64)=accent`；盒子 UV 展开尺寸（`2*(w+d) × (h+d)`）必须落在 64×64 象限内，目前最大 44×13.5。
+- 贴图坐标（256×256，八色区）：`(0,0)=primary`、`(64,0)=shadow`、`(128,0)=trim`、`(192,0)=dark`、`(0,64)=accent`、`(64,64)=glass`、`(128,64)=metal`、`(192,64)=lamp`；盒子 UV 展开尺寸（`2*(w+d) × (h+d)`）必须落在 64×64 色区内，目前最大 52×20.2（领圈 / 胸壳）。色区是纯色的：盒子从 texOffs 起整块采样，色区里画图案只会按随机偏移落在某个面上，所以细节来自几何和材质数量，不靠贴图绘制。
 - 预览：`build/reports/hazmat-preview.png`（由 `F:\DSH\work\preview_hazmat.py` 直接解析模型源码生成的正交示意图，只用于比例自查，不是实机渲染）。
 
 ## 门调节器（新 UI）
