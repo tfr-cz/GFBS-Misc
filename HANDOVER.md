@@ -67,6 +67,10 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 - 贴图坐标（256×256，八色区）：`(0,0)=primary`、`(64,0)=shadow`、`(128,0)=trim`、`(192,0)=dark`、`(0,64)=accent`、`(64,64)=glass`、`(128,64)=metal`、`(192,64)=lamp`；盒子 UV 展开尺寸（`2*(w+d) × (h+d)`）必须落在 64×64 色区内，目前最大 47.8×19.1（领圈 / 胸壳）。色区现在画成**旧化贴片**（叠层 value noise 做污渍、漂白、流痕、划痕，金属加锈），由 `F:\DSH\work\gen_hazmat_textures.py` 按固定种子生成；盒子从 texOffs 起采样、六个面落在 unwrap 不同子区，所以噪点会自然变成“每个面脏得不一样”。**不能**放进色区的是位置性图案（接缝、logo、边缘磨损）——它们会按不可预测的偏移落到某个面上。
 - 预览：`build/reports/hazmat-preview.png`（由 `F:\DSH\work\preview_hazmat.py` 直接解析模型源码生成的正交示意图，只用于比例自查，不是实机渲染）。
 - 尺寸：整体比早期版本收过一圈（`F:\DSH\work\shrink_hazmat.py` 按部位、按锚点缩放：头/胸 XZ 0.92、Y 0.96；袖臂 XZ 0.90；裤/靴 XZ 0.94；靴子 Y 不动，否则鞋底会离地）。
+- 关节设计（避免可避免的穿模）：**护颈圈做成开口环**（前/后/左/右四面墙，内口 10.9），兜帽下沿在护颈圈上沿之上收口（y -1.2 vs -1.34），颈部由**随头转动的深色颈封**（9.02 宽，间隙 0.94）填住——头部左右转时是颈封在开口里转，而不是兜帽去切一块实心板。
+- 关节设计（续）：肩部袖筒拆成**肩段**（x 4.9 宽、z ±2.7，全在躯干前后表面之内）和**小臂段**（全尺寸）；大腿拆成髋段（±2.06、z ±2.6，收在腰带里面）和主段。这样旋转时扫过邻近部件的是收窄的那一段。
+- 手套比袖筒内缩 0.08（x/z 都缩）——它原来和袖筒共用同一组侧面，两层共面就是手腕处那种一闪一闪的来源。
+- 共面检查：`F:\DSH\workudit_hazmat.py` 报同一个 mesh 里**同向**共面的面对（背面剔除会吃掉反向的那一类，所以只查同向）；`F:\DSH\workix_overlaps.py` 把撞车盒子里体积较小的那个面内移 0.06 直到清零。改完几何必须跑这两个，`problems: 0` 才提交。
 - 隐去皮肤外层（`HazmatSkinLayers`）：头盔→`hat`，胸甲→`jacket`+`leftSleeve`/`rightSleeve`，护腿→`leftPants`/`rightPants` 置 `visible=false`。**只置 false、从不置回 true**（skinlayers3d 自己也会把这些部件隐藏掉换成 3D 几何，我们重新置 true 会叠一层平面外层；恢复靠每帧 `setModelProperties` 自己重设）。**基础部件 head/body/arm/leg 一律不碰**（脸上要透过视窗看见，而且 Forge `copyModelProperties` 会把玩家模型部件可见性拷到护甲模型上，隐藏基础部件会把套装自己一起隐藏）。
 - 3D 皮肤层（skinlayers3d）：它渲染的是自己生成的网格，且判据用的是**基础部件**可见性，所以隐藏外层部件对它无效；改走它自己的 `PlayerSettings#clearMeshes`（`ThirdPartySkinLayers` 反射调用，mod 不在或改了接口就静默跳过）。清空后下一帧 `SkinUtil.setup3dLayers` 命中皮肤缓存直接返回 false，不会重建网格，因此每帧清空没有性能代价；代价是它也**不会自己重建**，所以脱下护甲时（`SUPPRESSED` 弱引用集合里记过）用一次 `setCurrentSkin(null)` 让它在下一帧从贴图重建。
 

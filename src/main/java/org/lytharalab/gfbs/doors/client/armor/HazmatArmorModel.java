@@ -75,9 +75,9 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
         head.addOrReplaceChild("hood", boxes(PRIMARY_U, PRIMARY_V)
             .addBox(-4.78F, -10.18F, -4.78F, 9.57F, 1.82F, 9.57F)      // crown
             .addBox(-5.24F, -8.35F, -5.24F, 10.49F, 2.5F, 10.49F)       // upper shell
-            .addBox(-5.24F, -5.86F, -5.24F, 1.01F, 6.24F, 10.49F)        // left wall
-            .addBox(4.23F, -5.86F, -5.24F, 1.01F, 6.24F, 10.49F)         // right wall
-            .addBox(-5.24F, -5.86F, 2.76F, 10.49F, 6.24F, 2.48F),        // back wall
+            .addBox(-5.18F, -5.8F, -5.24F, 0.95F, 4.54F, 10.43F)        // left wall, rim stops above the gorget
+            .addBox(4.23F, -5.8F, -5.24F, 0.95F, 4.54F, 10.43F)         // right wall
+            .addBox(-5.24F, -5.86F, 2.76F, 10.49F, 4.66F, 2.48F),        // back wall
             PartPose.ZERO);
         head.addOrReplaceChild("hoodTrim", boxes(SHADOW_U, SHADOW_V)
             .addBox(-5.43F, -7.1F, -5.43F, 10.86F, 0.77F, 10.86F)       // panel seam band
@@ -85,13 +85,13 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             .addBox(-4.97F, -9.22F, -4.97F, 9.94F, 0.67F, 9.94F),      // crown step
             PartPose.ZERO);
         head.addOrReplaceChild("seal", boxes(DARK_U, DARK_V)
-            .addBox(-4.51F, 0.29F, -4.51F, 9.02F, 1.54F, 9.02F)          // neck seal
-            .addBox(-4.05F, 0.0F, -4.05F, 8.1F, 0.67F, 8.1F),         // seal lip
+            .addBox(-4.51F, -1.5F, -4.51F, 9.02F, 1.9F, 9.02F)           // neck seal, fills the gorget opening
+            .addBox(-4.05F, 0.4F, -4.05F, 8.1F, 0.55F, 8.1F),         // seal lip
             PartPose.ZERO);
         head.addOrReplaceChild("face", boxes(DARK_U, DARK_V)
             .addBox(-4.78F, -6.62F, -6.07F, 9.57F, 1.34F, 1.38F)        // brow brim
-            .addBox(-4.78F, -5.28F, -5.98F, 0.83F, 5.18F, 0.92F)         // visor frame left
-            .addBox(3.96F, -5.28F, -5.98F, 0.83F, 5.18F, 0.92F)          // visor frame right
+            .addBox(-4.72F, -5.28F, -5.98F, 0.77F, 5.18F, 0.92F)         // visor frame left
+            .addBox(3.96F, -5.28F, -5.98F, 0.77F, 5.18F, 0.92F)          // visor frame right
             .addBox(-4.78F, -0.29F, -6.07F, 9.57F, 2.02F, 11.96F),      // chin guard
             PartPose.ZERO);
         head.addOrReplaceChild("visor", boxes(GLASS_U, GLASS_V)
@@ -101,8 +101,8 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             .addBox(-3.4F, -0.1F, -6.21F, 1.56F, 1.25F, 0.28F)        // chin slits
             .addBox(-0.83F, -0.1F, -6.21F, 1.56F, 1.25F, 0.28F)
             .addBox(1.75F, -0.1F, -6.21F, 1.56F, 1.25F, 0.28F)
-            .addBox(-5.98F, -1.15F, -2.21F, 0.74F, 1.15F, 4.42F)         // cheek intake grille
-            .addBox(5.34F, -1.15F, -2.21F, 0.74F, 1.15F, 4.42F),
+            .addBox(-5.98F, -1.15F, -2.21F, 0.68F, 1.15F, 4.42F)         // cheek intake grille
+            .addBox(5.4F, -1.15F, -2.21F, 0.68F, 1.15F, 4.42F),
             PartPose.ZERO);
         head.addOrReplaceChild("canisters", boxes(TRIM_U, TRIM_V)
             .addBox(-6.72F, -3.74F, -1.75F, 1.38F, 3.46F, 3.5F)         // left cartridge
@@ -142,29 +142,32 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             PartPose.ZERO);
         body.addOrReplaceChild("panelling", boxes(SHADOW_U, SHADOW_V)
             .addBox(-5.06F, 2.5F, -2.85F, 10.12F, 0.96F, 5.7F)         // waist seam
-            .addBox(-5.06F, 8.45F, -2.85F, 10.12F, 0.86F, 5.7F)         // chest seam
+            .addBox(-5.06F, 8.45F, -2.79F, 10.12F, 0.86F, 5.64F)         // chest seam
             .addBox(-5.06F, -0.67F, -2.85F, 10.12F, 2.3F, 5.7F),       // shoulder yoke
             PartPose.ZERO);
         body.addOrReplaceChild("collar", boxes(TRIM_U, TRIM_V)
-            .addBox(-5.98F, -1.34F, -5.98F, 11.96F, 3.07F, 11.96F)       // hood ring
-            .addBox(-4.42F, 3.07F, -3.68F, 8.83F, 5.95F, 1.1F),         // chest plate
+            .addBox(-6.05F, -1.34F, -6.05F, 12.1F, 1.14F, 0.6F)          // gorget front
+            .addBox(-6.05F, -1.34F, 5.45F, 12.1F, 1.14F, 0.6F)           // gorget back
+            .addBox(-6.05F, -1.34F, -5.45F, 0.6F, 1.14F, 10.9F)          // gorget left
+            .addBox(5.45F, -1.34F, -5.45F, 0.6F, 1.14F, 10.9F)           // gorget right
+            .addBox(-4.42F, 3.07F, -3.68F, 8.83F, 5.95F, 1.1F),          // chest plate
             PartPose.ZERO);
         body.addOrReplaceChild("harness", boxes(ACCENT_U, ACCENT_V)
             .addBox(-5.15F, 7.3F, -3.04F, 10.3F, 1.34F, 0.55F)         // chest strap
-            .addBox(-0.55F, 0.58F, -3.04F, 1.1F, 10.37F, 0.46F)         // centre zip
-            .addBox(-4.32F, 0.96F, -3.04F, 1.29F, 5.76F, 0.46F)          // shoulder strap left
-            .addBox(3.04F, 0.96F, -3.04F, 1.29F, 5.76F, 0.46F)           // shoulder strap right
-            .addBox(-2.94F, 9.98F, 5.15F, 0.92F, 1.54F, 0.92F)          // tank hose
+            .addBox(-0.55F, 0.58F, -2.92F, 1.1F, 10.37F, 0.22F)         // centre zip
+            .addBox(-4.32F, 0.96F, -2.98F, 1.29F, 5.76F, 0.34F)          // shoulder strap left
+            .addBox(3.04F, 0.96F, -3.04F, 1.29F, 5.76F, 0.4F)           // shoulder strap right
+            .addBox(-2.94F, 10.04F, 5.15F, 0.92F, 1.48F, 0.92F)          // tank hose
             .addBox(-2.67F, 4.42F, 5.06F, 0.74F, 5.57F, 0.74F),
             PartPose.ZERO);
         body.addOrReplaceChild("badge", boxes(METAL_U, METAL_V)
             .addBox(-1.1F, 4.22F, -3.82F, 2.94F, 2.11F, 0.37F),        // chest badge
             PartPose.ZERO);
         body.addOrReplaceChild("belt", boxes(DARK_U, DARK_V)
-            .addBox(-5.34F, 10.75F, -2.94F, 10.67F, 2.11F, 5.89F)        // belt
+            .addBox(-5.34F, 10.75F, -2.94F, 10.67F, 2.05F, 5.89F)        // belt
             .addBox(-3.04F, 0.96F, 2.76F, 6.07F, 9.98F, 0.83F)          // spine plate
-            .addBox(-4.23F, 9.98F, 3.59F, 3.31F, 0.86F, 3.31F)          // tank collars
-            .addBox(0.92F, 9.98F, 3.59F, 3.31F, 0.86F, 3.31F),
+            .addBox(-4.17F, 9.98F, 3.59F, 3.19F, 0.86F, 3.31F)          // tank collars
+            .addBox(0.98F, 9.98F, 3.59F, 3.19F, 0.86F, 3.31F),
             PartPose.ZERO);
         body.addOrReplaceChild("tanks", boxes(TRIM_U, TRIM_V)
             .addBox(-4.23F, 1.54F, 3.63F, 3.31F, 8.64F, 3.31F)          // left tank
@@ -178,8 +181,8 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             .addBox(-3.22F, 10.85F, 4.78F, 1.47F, 1.06F, 1.47F)          // valves
             .addBox(1.75F, 10.85F, 4.78F, 1.47F, 1.06F, 1.47F)
             .addBox(-1.47F, 10.94F, -3.22F, 2.94F, 1.44F, 0.46F)         // buckle
-            .addBox(-4.32F, 10.75F, -3.08F, 0.83F, 2.11F, 0.28F)        // belt loops
-            .addBox(1.29F, 10.75F, -3.08F, 0.83F, 2.11F, 0.28F),
+            .addBox(-4.32F, 10.81F, -3.08F, 0.83F, 1.93F, 0.28F)        // belt loops
+            .addBox(1.29F, 10.81F, -3.08F, 0.83F, 1.93F, 0.28F),
             PartPose.ZERO);
 
         arm(mesh, "right_arm", false);
@@ -191,7 +194,8 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
     private static void arm(MeshDefinition mesh, String part, boolean mirrored) {
         PartDefinition arm = mesh.getRoot().getChild(part);
         arm.addOrReplaceChild("sleeve", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(mx(-3.87F, 5.4F, mirrored), -3.07F, -2.94F, 5.4F, 10.18F, 5.89F),
+            .addBox(mx(-3.6F, 4.9F, mirrored), -3.07F, -2.7F, 4.9F, 5.5F, 5.4F)       // shoulder, tucked under the pad
+            .addBox(mx(-3.87F, 5.4F, mirrored), 2.1F, -2.94F, 5.4F, 5.01F, 5.89F),    // forearm
             PartPose.ZERO);
         arm.addOrReplaceChild("cuff", boxes(TRIM_U, TRIM_V)
             .addBox(mx(-3.96F, 5.58F, mirrored), 5.18F, -3.04F, 5.58F, 1.44F, 6.07F),
@@ -206,7 +210,7 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             .addBox(mx(-4.59F, 5.04F, mirrored), -4.7F, -2.81F, 5.04F, 0.67F, 5.61F),
             PartPose.rotation(0.0F, 0.0F, mirrored ? -0.10F : 0.10F));
         arm.addOrReplaceChild("glove", boxes(ACCENT_U, ACCENT_V)
-            .addBox(mx(-3.87F, 5.4F, mirrored), 6.53F, -2.94F, 5.4F, 3.55F, 5.89F),
+            .addBox(mx(-3.79F, 5.24F, mirrored), 6.53F, -2.86F, 5.24F, 3.55F, 5.73F),
             PartPose.ZERO);
         arm.addOrReplaceChild("knuckles", boxes(METAL_U, METAL_V)
             .addBox(mx(-3.69F, 5.04F, mirrored), 7.87F, -3.13F, 5.04F, 1.34F, 0.46F),
@@ -225,7 +229,7 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             .addBox(-4.51F, 9.7F, -2.73F, 9.02F, 1.92F, 5.45F),
             PartPose.ZERO);
         mesh.getRoot().getChild("body").addOrReplaceChild("hipBuckle", boxes(METAL_U, METAL_V)
-            .addBox(-1.22F, 9.89F, -2.91F, 2.44F, 1.44F, 0.47F),
+            .addBox(-1.22F, 9.89F, -2.79F, 2.44F, 1.44F, 0.35F),
             PartPose.ZERO);
         legBoxes(mesh, "right_leg");
         legBoxes(mesh, "left_leg");
@@ -235,25 +239,26 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
     private static void legBoxes(MeshDefinition mesh, String part) {
         PartDefinition leg = mesh.getRoot().getChild(part);
         leg.addOrReplaceChild("thigh", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(-2.26F, -1.44F, -2.82F, 4.51F, 7.87F, 5.64F),
+            .addBox(-2.06F, -1.44F, -2.6F, 4.12F, 3.5F, 5.2F)          // hip section, tucked under the belt
+            .addBox(-2.26F, 1.75F, -2.82F, 4.51F, 4.68F, 5.64F),       // thigh
             PartPose.ZERO);
         leg.addOrReplaceChild("thighSeam", boxes(SHADOW_U, SHADOW_V)
             .addBox(-2.21F, 3.46F, -2.87F, 4.42F, 0.77F, 5.73F)        // horizontal seam
-            .addBox(-2.21F, 6.24F, -2.77F, 4.42F, 1.34F, 5.55F),       // lower cuff
+            .addBox(-2.21F, 6.24F, -2.71F, 4.42F, 1.34F, 5.49F),       // lower cuff
             PartPose.ZERO);
         leg.addOrReplaceChild("pocket", boxes(DARK_U, DARK_V)
-            .addBox(-1.69F, 1.73F, -3.15F, 3.38F, 3.07F, 0.56F),        // cargo pocket
+            .addBox(-1.69F, 1.73F, -3.15F, 3.38F, 3.07F, 0.5F),        // cargo pocket
             PartPose.ZERO);
         leg.addOrReplaceChild("pocketFlap", boxes(ACCENT_U, ACCENT_V)
             .addBox(-1.79F, 2.5F, -3.29F, 3.57F, 0.77F, 0.38F)          // pocket flap
-            .addBox(-2.4F, 4.22F, -2.96F, 0.47F, 1.92F, 5.92F),       // outer side strap
+            .addBox(-2.4F, 4.22F, -2.96F, 0.47F, 1.92F, 5.86F),       // outer side strap
             PartPose.ZERO);
         leg.addOrReplaceChild("knee", boxes(TRIM_U, TRIM_V)
-            .addBox(-2.54F, 4.99F, -3.67F, 5.08F, 2.11F, 2.07F),
+            .addBox(-2.54F, 4.99F, -3.61F, 5.08F, 2.05F, 2.01F),
             PartPose.ZERO);
         leg.addOrReplaceChild("kneeBolts", boxes(METAL_U, METAL_V)
             .addBox(-1.97F, 5.47F, -3.81F, 0.66F, 0.67F, 0.28F)
-            .addBox(1.32F, 5.47F, -3.81F, 0.66F, 0.67F, 0.28F),
+            .addBox(1.32F, 5.47F, -3.75F, 0.66F, 0.67F, 0.22F),
             PartPose.ZERO);
     }
 
@@ -272,16 +277,16 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             PartPose.ZERO);
         leg.addOrReplaceChild("cuff", boxes(TRIM_U, TRIM_V)
             .addBox(-2.63F, 6.8F, -3.1F, 5.26F, 1.0F, 6.2F)          // top cuff
-            .addBox(-2.68F, 8.1F, -3.1F, 5.36F, 0.9F, 6.2F),        // ankle strap
+            .addBox(-2.68F, 8.1F, -3.1F, 5.36F, 0.84F, 6.2F),        // ankle strap
             PartPose.ZERO);
         leg.addOrReplaceChild("toeCap", boxes(METAL_U, METAL_V)
-            .addBox(-2.54F, 8.6F, -4.14F, 5.08F, 2.5F, 1.22F),         // steel toe
+            .addBox(-2.48F, 8.6F, -4.14F, 4.96F, 2.44F, 1.22F),         // steel toe
             PartPose.ZERO);
         leg.addOrReplaceChild("heel", boxes(DARK_U, DARK_V)
-            .addBox(-2.35F, 9.4F, 2.54F, 4.7F, 1.7F, 1.13F),          // heel block
+            .addBox(-2.35F, 9.4F, 2.54F, 4.7F, 1.64F, 1.13F),          // heel block
             PartPose.ZERO);
         leg.addOrReplaceChild("buckle", boxes(METAL_U, METAL_V)
-            .addBox(-0.75F, 8.1F, -3.29F, 1.5F, 1.1F, 0.38F),
+            .addBox(-0.75F, 8.16F, -3.29F, 1.5F, 0.98F, 0.32F),
             PartPose.ZERO);
         leg.addOrReplaceChild("sole", boxes(DARK_U, DARK_V)
             .addBox(-2.73F, 11.1F, -4.32F, 5.45F, 1.0F, 7.52F),        // sole body
