@@ -70,7 +70,7 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 - 关节设计（避免可避免的穿模）：**护颈圈做成开口环**（前/后/左/右四面墙，内口 10.9），兜帽下沿在护颈圈上沿之上收口（y -1.2 vs -1.34），颈部由**随头转动的深色颈封**（9.02 宽，间隙 0.94）填住——头部左右转时是颈封在开口里转，而不是兜帽去切一块实心板。
 - 关节设计（续）：肩部袖筒拆成**肩段**（x 4.9 宽、z ±2.7，全在躯干前后表面之内）和**小臂段**（全尺寸）；大腿拆成髋段（±2.06、z ±2.6，收在腰带里面）和主段。这样旋转时扫过邻近部件的是收窄的那一段。
 - 手套比袖筒内缩 0.08（x/z 都缩）——它原来和袖筒共用同一组侧面，两层共面就是手腕处那种一闪一闪的来源。
-- 共面检查：`F:\DSH\workudit_hazmat.py` 报同一个 mesh 里**同向**共面的面对（背面剔除会吃掉反向的那一类，所以只查同向）；`F:\DSH\workix_overlaps.py` 把撞车盒子里体积较小的那个面内移 0.06 直到清零。改完几何必须跑这两个，`problems: 0` 才提交。
+- 共面检查：`tools/audit_model.py`（= `F:\DSH\workudit_hazmat.py`）报同一个 mesh 里**同向**共面的面对（背面剔除会吃掉反向的那一类，所以只查同向）；`tools/fix_model_overlaps.py`（= `F:\DSH\workix_overlaps.py`）把撞车盒子里体积较小的那个面内移 0.06 直到清零；两个脚本都可以在仓库根直接跑。改完几何必须跑这两个，`problems: 0` 才提交。
 - 隐去皮肤外层（`HazmatSkinLayers`）：头盔→`hat`，胸甲→`jacket`+`leftSleeve`/`rightSleeve`，护腿→`leftPants`/`rightPants` 置 `visible=false`。**只置 false、从不置回 true**（skinlayers3d 自己也会把这些部件隐藏掉换成 3D 几何，我们重新置 true 会叠一层平面外层；恢复靠每帧 `setModelProperties` 自己重设）。**基础部件 head/body/arm/leg 一律不碰**（脸上要透过视窗看见，而且 Forge `copyModelProperties` 会把玩家模型部件可见性拷到护甲模型上，隐藏基础部件会把套装自己一起隐藏）。
 - 3D 皮肤层（skinlayers3d）：它渲染的是自己生成的网格，且判据用的是**基础部件**可见性，所以隐藏外层部件对它无效；改走它自己的 `PlayerSettings#clearMeshes`（`ThirdPartySkinLayers` 反射调用，mod 不在或改了接口就静默跳过）。清空后下一帧 `SkinUtil.setup3dLayers` 命中皮肤缓存直接返回 false，不会重建网格，因此每帧清空没有性能代价；代价是它也**不会自己重建**，所以脱下护甲时（`SUPPRESSED` 弱引用集合里记过）用一次 `setCurrentSkin(null)` 让它在下一帧从贴图重建。
 

@@ -195,10 +195,10 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
         PartDefinition arm = mesh.getRoot().getChild(part);
         arm.addOrReplaceChild("sleeve", boxes(PRIMARY_U, PRIMARY_V)
             .addBox(mx(-3.6F, 4.9F, mirrored), -3.07F, -2.7F, 4.9F, 5.5F, 5.4F)       // shoulder, tucked under the pad
-            .addBox(mx(-3.87F, 5.4F, mirrored), 2.1F, -2.94F, 5.4F, 5.01F, 5.89F),    // forearm
+            .addBox(mx(-3.87F, 5.4F, mirrored), 2.1F, -2.72F, 5.4F, 5.01F, 5.44F),    // forearm
             PartPose.ZERO);
         arm.addOrReplaceChild("cuff", boxes(TRIM_U, TRIM_V)
-            .addBox(mx(-3.96F, 5.58F, mirrored), 5.18F, -3.04F, 5.58F, 1.44F, 6.07F),
+            .addBox(mx(-3.94F, 5.54F, mirrored), 5.18F, -2.79F, 5.54F, 1.44F, 5.58F),
             PartPose.ZERO);
         arm.addOrReplaceChild("pad", boxes(TRIM_U, TRIM_V)
             .addBox(mx(-4.77F, 5.4F, mirrored), -4.42F, -2.99F, 5.4F, 3.74F, 5.98F),
@@ -210,10 +210,10 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             .addBox(mx(-4.59F, 5.04F, mirrored), -4.7F, -2.81F, 5.04F, 0.67F, 5.61F),
             PartPose.rotation(0.0F, 0.0F, mirrored ? -0.10F : 0.10F));
         arm.addOrReplaceChild("glove", boxes(ACCENT_U, ACCENT_V)
-            .addBox(mx(-3.79F, 5.24F, mirrored), 6.53F, -2.86F, 5.24F, 3.55F, 5.73F),
+            .addBox(mx(-3.79F, 5.24F, mirrored), 6.53F, -2.64F, 5.24F, 3.55F, 5.28F),
             PartPose.ZERO);
         arm.addOrReplaceChild("knuckles", boxes(METAL_U, METAL_V)
-            .addBox(mx(-3.69F, 5.04F, mirrored), 7.87F, -3.13F, 5.04F, 1.34F, 0.46F),
+            .addBox(mx(-3.69F, 5.04F, mirrored), 7.87F, -2.9F, 5.04F, 1.34F, 0.46F),
             PartPose.ZERO);
     }
 
@@ -244,7 +244,7 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             PartPose.ZERO);
         leg.addOrReplaceChild("thighSeam", boxes(SHADOW_U, SHADOW_V)
             .addBox(-2.21F, 3.46F, -2.87F, 4.42F, 0.77F, 5.73F)        // horizontal seam
-            .addBox(-2.21F, 6.24F, -2.71F, 4.42F, 1.34F, 5.49F),       // lower cuff
+            .addBox(-2.21F, 6.24F, -2.59F, 4.42F, 1.34F, 5.31F),       // lower cuff
             PartPose.ZERO);
         leg.addOrReplaceChild("pocket", boxes(DARK_U, DARK_V)
             .addBox(-1.69F, 1.73F, -3.15F, 3.38F, 3.07F, 0.5F),        // cargo pocket
