@@ -81,6 +81,7 @@ dependencies {
     implementation fg.deobf("org.lytharalab.gfbs:gfbs_gltf:1.5.1")
     // Compile-only slice of GFBS : Main's public command API; GFBS : Main itself stays optional.
     compileOnly files('libs/gfbs_main_api_stub.jar')
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -118,4 +119,8 @@ tasks.withType(JavaCompile).configureEach {
             '-Xlint:none',
             '-nowarn'
     ]
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
 }

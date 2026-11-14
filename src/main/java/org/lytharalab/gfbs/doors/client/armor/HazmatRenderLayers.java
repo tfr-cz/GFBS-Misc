@@ -6,6 +6,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 
 /**
  * Attaches the translucent visor layer to every player renderer.
@@ -16,8 +17,11 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
  * order - the right place for something translucent.</p>
  */
 @OnlyIn(Dist.CLIENT)
+// EntityRenderersEvent is a MOD bus event: registering this on the default (FORGE) bus means the
+// listener is never invoked and the visor layer is never attached.
 @EventBusSubscriber(
     modid = "gfbs_misc",
+    bus = Bus.MOD,
     value = {Dist.CLIENT}
 )
 public final class HazmatRenderLayers {
