@@ -1,0 +1,13 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "org.lytharalab.gfbs.misc.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "plugin": "org.lytharalab.gfbs.misc.mixin.GfbsMiscMixinPlugin",
+  "client": [
+    "GltfUploadedTextureMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

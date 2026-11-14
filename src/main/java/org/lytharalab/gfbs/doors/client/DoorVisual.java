@@ -45,6 +45,7 @@ public final class DoorVisual {
         this.nodeCount = asset.nodes().size();
         this.instance = new GltfInstance(asset);
         this.instance.renderOptions().frustumCulling(false).castShadows(true);
+        GltfCompat.applyOptions(this.instance.renderOptions());
 
         for (String part : spec.parts) {
             List nodes = new ArrayList();

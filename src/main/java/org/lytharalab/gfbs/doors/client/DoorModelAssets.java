@@ -21,6 +21,7 @@ public final class DoorModelAssets {
     private static final Map<ResourceLocation, CompletableFuture<GltfAsset>> REQUESTS = new ConcurrentHashMap<>();
     private static final Set<ResourceLocation> KNOWN = ConcurrentHashMap.newKeySet();
     private static final Map<String, ResourceLocation> ID_CACHE = new HashMap<>(32);
+    private static final Set<ResourceLocation> PREPARED = ConcurrentHashMap.newKeySet();
 
     private DoorModelAssets() {
     }
@@ -41,7 +42,12 @@ public final class DoorModelAssets {
         ResourceLocation id = idFor(modelPath);
         Optional loaded = ClientGltfApi.models().getIfLoaded(id);
         if (loaded.isPresent()) {
-            return (GltfAsset)loaded.get();
+            GltfAsset asset = (GltfAsset)loaded.get();
+            if (PREPARED.add(id)) {
+                GltfCompat.prepareScene(asset);
+            }
+
+            return asset;
         } else {
             REQUESTS.computeIfAbsent(id, key -> {
                 KNOWN.add(key);
@@ -59,6 +65,7 @@ public final class DoorModelAssets {
     }
 
     public static void clear() {
+        PREPARED.clear();
         REQUESTS.clear();
 
         for (ResourceLocation id : KNOWN) {

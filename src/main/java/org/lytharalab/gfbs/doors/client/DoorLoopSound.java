@@ -57,6 +57,10 @@ public final class DoorLoopSound extends AbstractSoundInstance implements Tickab
         }
     }
 
+    public void setVolume(float volume) {
+        this.volume = volume;
+    }
+
     public void stop() {
         this.stopped = true;
     }

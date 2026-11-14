@@ -23,6 +23,13 @@ their resources out of this one.
 - T-51b footsteps use `step.metal`; `powered1..3` belong to other suits.
 - A key that can hold an empty slot is a `record`, never `List.of(...)` plus a `contains(null)` check.
 - Vanilla armour visibility comes from `setPartVisibility`, not from the player model.
+- A mixin that names a missing target aborts startup: gate it with `IMixinConfigPlugin#shouldApplyMixin`, because
+  `gfbs_gltf` 1.6 classes (`GltfUploadedTexture`) do not exist on 1.5.x.
+- The mixin config only loads through `MixinConfigs` in the jar manifest, and without MixinGradle a dev run never
+  applies it — judge the mixin from the built jar, not from `runClient`.
+- `AuralisBackend` / `GltfCompat` resolve every method in one all-or-nothing `try`: one renamed method silently drops
+  the whole feature (it falls back to the vanilla path). Check the target jar with `javap -p` before trusting it.
+- Auralis bypasses the vanilla `BLOCKS` mix, so its volume must be `base * BLOCKS * MASTER`; vanilla only needs `base`.
 
 ## Runtime signals
 

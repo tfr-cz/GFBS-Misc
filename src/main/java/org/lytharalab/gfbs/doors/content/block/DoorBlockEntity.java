@@ -308,7 +308,7 @@ public class DoorBlockEntity extends BlockEntity {
                 var11,
                 y,
                 z,
-                this.getSpec().soundVolume,
+                Mth.clamp(this.getSpec().soundVolume, 0.0F, 1.0F),
                 1.0F,
                 serverLevel.random.nextLong()
             );

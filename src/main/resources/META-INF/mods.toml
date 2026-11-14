@@ -36,3 +36,11 @@ mandatory = false
 versionRange = "[1,)"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "gfbs_auralis"
+mandatory = false
+# 可选：装了就把门循环音交给 Auralis 做空间音频，没装则回退原版 SoundManager（反射探测，不硬依赖）。
+versionRange = "[2.0.0,)"
+ordering = "AFTER"
+side = "CLIENT"
