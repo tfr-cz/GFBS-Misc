@@ -39,6 +39,14 @@ The game already writes the evidence, just outside this repo:
 
 The instance path comes from `--instance`, `$GFBS_INSTANCE`, or `.scratch/runtime.env`; set it once.
 
+## When `git push` cannot reach GitHub
+
+On this machine git's schannel backend fails the TLS revocation check (`CRYPT_E_NO_REVOCATION_CHECK`) and
+`http.schannelCheckRevoke=false` does not help; `curl --ssl-no-revoke` and `gh api` both still work. Push through
+the Git Data API instead, which keeps the commit SHAs: `POST /git/blobs` per changed blob, `POST /git/trees` with
+`base_tree` = the remote head's tree, `POST /git/commits` with the original author/committer, then
+`PATCH /git/refs/heads/master`. Verify by comparing `git rev-parse master^{tree}` with the remote commit's tree.
+
 ## Inspecting a jar (NTM, Forge, glTF)
 
 - `unzip -l <jar> | grep -i <pattern>` finds a path, `unzip -p <jar> <path>` reads that one file.
