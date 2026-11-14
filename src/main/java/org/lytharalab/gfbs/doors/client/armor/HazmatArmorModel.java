@@ -85,8 +85,7 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             .addBox(-4.97F, -9.22F, -4.97F, 9.94F, 0.67F, 9.94F),      // crown step
             PartPose.ZERO);
         head.addOrReplaceChild("seal", boxes(DARK_U, DARK_V)
-            .addBox(-4.0F, -1.5F, -2.7F, 8.0F, 1.9F, 5.4F)              // neck seal, inside the torso outline
-            .addBox(-3.6F, 0.4F, -2.4F, 7.2F, 0.55F, 4.8F),           // seal lip
+            .addBox(-4.9F, -1.3F, -4.9F, 9.8F, 1.4F, 9.8F),             // hood lining: closes the rim opening
             PartPose.ZERO);
         head.addOrReplaceChild("face", boxes(DARK_U, DARK_V)
             .addBox(-4.78F, -6.62F, -6.07F, 9.57F, 1.34F, 1.38F)        // brow brim
@@ -161,7 +160,7 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             PartPose.ZERO);
         body.addOrReplaceChild("belt", boxes(DARK_U, DARK_V)
             .addBox(-5.34F, 10.75F, -2.94F, 10.67F, 2.05F, 5.89F)        // belt
-            .addBox(-3.04F, 0.96F, 2.76F, 6.07F, 9.98F, 0.83F)          // spine plate
+            .addBox(-3.04F, -1.34F, 2.76F, 6.07F, 12.28F, 0.83F)        // spine plate, up to the hood
             .addBox(-4.17F, 9.98F, 3.59F, 3.19F, 0.86F, 3.31F)          // tank collars
             .addBox(0.98F, 9.98F, 3.59F, 3.19F, 0.86F, 3.31F),
             PartPose.ZERO);
