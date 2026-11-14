@@ -10,6 +10,7 @@ import org.lytharalab.gfbs.doors.content.ModBlocks;
 import org.lytharalab.gfbs.doors.content.ModCreativeTabs;
 import org.lytharalab.gfbs.doors.content.ModItems;
 import org.lytharalab.gfbs.doors.content.ModSounds;
+import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
 import org.lytharalab.gfbs.misc.network.MiscNetwork;
 import org.slf4j.Logger;
 
@@ -30,5 +31,11 @@ public final class GFBSMisc {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(MiscNetwork::register);
+        // Registries are populated by now, so the armour resistance tables can be built against real items.
+        event.enqueueWork(() -> PowerArmorItem.registerResistances(
+            () -> ModItems.POWER_HELMET.get(),
+            () -> ModItems.POWER_CHEST.get(),
+            () -> ModItems.POWER_LEGS.get(),
+            () -> ModItems.POWER_BOOTS.get()));
     }
 }

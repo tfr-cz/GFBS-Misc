@@ -5,9 +5,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import net.minecraft.world.damagesource.DamageTypes;
 import org.lytharalab.gfbs.doors.client.armor.EmptyArmorModel;
+import org.lytharalab.gfbs.doors.content.armor.resistance.ArmorResistanceTable;
+import org.lytharalab.gfbs.doors.content.armor.resistance.ArmorResistances;
+import org.lytharalab.gfbs.doors.content.armor.resistance.DamageCategory;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -21,6 +26,22 @@ import java.util.function.Consumer;
  * drawing anything at all, so there is no double image and no vanilla armour texture in the way.</p>
  */
 public final class PowerArmorItem extends ArmorItem {
+    /**
+     * HBM's {@code registerSet} entry for the T-51b. One item differs from NTM: HBM's exact entry used an
+     * obfuscated 1.7.10 damage source that cannot be resolved offline; fall damage is the one that makes
+     * sense for a suit whose landing slam fires at 10 blocks, so that is what the immunity is attached to.
+     */
+    public static void registerResistances(java.util.function.Supplier<Item> helmet, java.util.function.Supplier<Item> chest,
+                                           java.util.function.Supplier<Item> legs, java.util.function.Supplier<Item> boots) {
+        ArmorResistances.registerSet(helmet.get(), chest.get(), legs.get(), boots.get(), ArmorResistanceTable.builder()
+            .addCategory(DamageCategory.PHYSICAL, 2.0F, 0.15F)
+            .addCategory(DamageCategory.FIRE, 0.5F, 0.35F)
+            .addCategory(DamageCategory.EXPLOSION, 5.0F, 0.25F)
+            .addExact(DamageTypes.FALL, 0.0F, 1.0F)
+            .setOther(0.0F, 0.1F)
+            .build());
+    }
+
     public PowerArmorItem(ArmorItem.Type type, Properties properties) {
         super(PowerArmorMaterial.INSTANCE, type, properties);
     }
