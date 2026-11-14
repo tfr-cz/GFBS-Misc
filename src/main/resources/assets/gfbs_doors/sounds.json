@@ -216,5 +216,13 @@
         "attenuation_distance": 64
       }
     ]
+  },
+  "armor.step_power": {
+    "category": "player",
+    "sounds": [
+      "armor/step_power1",
+      "armor/step_power2",
+      "armor/step_power3"
+    ]
   }
 }
