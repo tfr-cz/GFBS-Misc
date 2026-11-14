@@ -17,37 +17,27 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
- * Replaces the player's own model with the suit wherever the suit covers the body.
+ * Hides the player's own model entirely while a suit is worn.
  *
- * <p>This is the HBM approach: the armour is not a shell worn over a body, it <b>is</b> the body. Where
- * a suit piece is worn, the matching vanilla {@link PlayerModel} parts are hidden, so nothing of the
- * player's skin - neither the base layer nor the outer layer - can ever show through a seam or swing
- * out of an arm hole. The suit itself is rendered by the vanilla armour layer, which is unaffected:
- * that layer takes its part visibility from {@code setPartVisibility}, not from the player model, so
- * hiding the body cannot hide the armour.</p>
- *
- * <p>Coverage, so nothing goes missing:</p>
+ * <p>Two rules:</p>
  * <ul>
- *   <li>helmet hides only {@code hat}: the head itself stays, because the visor is glass and the
- *       face is supposed to be visible through it. The hat layer is hidden because it is inflated by
- *       0.5 and would poke through the hood's walls (the hood's inside is only 0.23 wider than the
- *       head)</li>
- *   <li>chestplate hides {@code body} and both arms - the sleeves reach past the wrist into the gloves
- *       and the torso runs from the collar to below the belt</li>
- *   <li>leggings hide both legs, but only together with the boots: the leggings stop below the knee
- *       and the boots cover the shins, so hiding the legs on their own would leave the player with
- *       floating thighs. Without the boots the vanilla legs stay and the leggings ride on them</li>
- *   <li>boots alone hide nothing: hiding the legs would leave the boots with no thigh above them</li>
+ *   <li><b>Full set worn</b> - the whole player model is hidden, base layer and outer layer alike. The
+ *       suit is the body, which is what HBM does, and it is the only way to stop the clipping that
+ *       shows up at walking speed: partially hiding leaves the remaining vanilla geometry free to swing
+ *       the hip and shoulder straight through the armour shells.</li>
+ *   <li><b>Partial wear</b> - only the covered parts are hidden, otherwise the player would end up with
+ *       invisible limbs between visible ones. This is where the suits are not fully "the body" yet, so
+ *       a fast walk there can still clip; wearing the complete set avoids it.</li>
  * </ul>
  *
- * <p>The outer skin layer is hidden along with the parts it belongs to. 3D Skin Layers needs no
- * special handling: its meshes are gated on the base part being visible, so hiding the body switches
- * it off by itself. Capes and ears keep rendering - in 1.20.1 they are drawn by their own layers with
- * their own model parts, not by the player model, so they simply sit on top of the suit.</p>
+ * <p>The outer skin layer is a part of the body model, so it goes with it. 3D Skin Layers needs no
+ * handling for the third-person pass - its meshes are gated on the base parts being visible - but it is
+ * suppressed explicitly all the same, because its first-person path injects a mesh into the sleeve
+ * regardless.</p>
  *
  * <p>{@link RenderPlayerEvent.Pre} fires right after {@code setModelProperties} re-applies the player's
- * own toggles, and only the covered parts are hidden - nothing is ever forced back on, so taking a
- * piece off restores the body on the next frame.</p>
+ * own toggles, and nothing is ever forced back on, so taking the suit off restores the body on the next
+ * frame.</p>
  */
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(
@@ -55,7 +45,7 @@ import java.util.WeakHashMap;
     value = {Dist.CLIENT}
 )
 public final class HazmatBodyReplacement {
-    /** Players whose 3D skin meshes were dropped while the helmet hid their hair. */
+    /** Players whose 3D skin meshes we cleared, so they can be rebuilt once the suit comes off. */
     private static final Set<AbstractClientPlayer> SUPPRESSED =
         Collections.newSetFromMap(new WeakHashMap<>());
 
@@ -68,48 +58,72 @@ public final class HazmatBodyReplacement {
         AbstractClientPlayer player = (AbstractClientPlayer) event.getEntity();
         PlayerModel<AbstractClientPlayer> model = event.getRenderer().getModel();
 
-        boolean helmet = wears(player, EquipmentSlot.HEAD);
-        boolean chestplate = wears(player, EquipmentSlot.CHEST);
-        // HBM's leggings cover the whole leg, so they hide it on their own; the hazmat leggings stop
-        // below the knee and only complete the leg together with the boots.
-        boolean legs = wears(player, EquipmentSlot.LEGS, PowerArmorItem.class)
-            || (wears(player, EquipmentSlot.LEGS) && wears(player, EquipmentSlot.FEET));
+        boolean helmet = ours(player, EquipmentSlot.HEAD);
+        boolean chestplate = ours(player, EquipmentSlot.CHEST);
+        boolean leggings = ours(player, EquipmentSlot.LEGS);
+        boolean boots = ours(player, EquipmentSlot.FEET);
 
-        if (helmet) {
-            model.hat.visible = false;
-            // 3D Skin Layers builds its hair mesh from the outer texture layer, inflated like the hat
-            // layer - it would grow through the hood. Its meshes are gated on the head part, which is
-            // visible now, so they have to be dropped explicitly while the helmet is on.
-            SUPPRESSED.add(player);
-            ThirdPartySkinLayers.suppress(player);
-        } else if (SUPPRESSED.remove(player)) {
-            ThirdPartySkinLayers.invalidate(player);
+        if (!(helmet || chestplate || leggings)) {
+            if (SUPPRESSED.remove(player)) {
+                // Cleared meshes are never rebuilt on their own: forget the cached skin once.
+                ThirdPartySkinLayers.invalidate(player);
+            }
+            return;
         }
-        if (chestplate) {
+
+        if (helmet && chestplate && leggings && boots) {
+            // Full set: take the body away so nothing can swing through the armour at speed. The head
+            // stays because the hazmat visor is glass and the face is meant to be visible through it;
+            // it moves with the head part exactly like the hood does, so it cannot clip either.
+            model.hat.visible = false;
             model.body.visible = false;
             model.rightArm.visible = false;
             model.leftArm.visible = false;
+            model.rightLeg.visible = false;
+            model.leftLeg.visible = false;
             model.jacket.visible = false;
             model.leftSleeve.visible = false;
             model.rightSleeve.visible = false;
-        }
-        // The leggings end below the knee; only the boots complete the leg, so the vanilla legs are
-        // kept (and the leggings ride over them) until both pieces are on.
-        if (legs) {
-            model.rightLeg.visible = false;
-            model.leftLeg.visible = false;
             model.leftPants.visible = false;
             model.rightPants.visible = false;
+        } else {
+            // Partial wear: only hide what the worn pieces really cover, otherwise the player would be
+            // left with invisible limbs between two visible ones.
+            if (helmet) {
+                model.hat.visible = false;
+            }
+            if (chestplate) {
+                model.body.visible = false;
+                model.rightArm.visible = false;
+                model.leftArm.visible = false;
+                model.jacket.visible = false;
+                model.leftSleeve.visible = false;
+                model.rightSleeve.visible = false;
+            }
+            // HBM's leggings cover the whole leg, so they hide it alone; the hazmat leggings stop below
+            // the knee and only complete the leg with the boots.
+            boolean hideLegs = (leggings && boots)
+                || (leggings && ours(player, EquipmentSlot.LEGS, PowerArmorItem.class));
+            if (hideLegs) {
+                model.rightLeg.visible = false;
+                model.leftLeg.visible = false;
+                model.leftPants.visible = false;
+                model.rightPants.visible = false;
+            }
         }
+
+        SUPPRESSED.add(player);
+        ThirdPartySkinLayers.suppress(player);
     }
 
-    private static boolean wears(AbstractClientPlayer player, EquipmentSlot slot) {
+
+    private static boolean ours(AbstractClientPlayer player, EquipmentSlot slot) {
         ItemStack stack = player.getItemBySlot(slot);
         return !stack.isEmpty()
             && (stack.getItem() instanceof HazmatArmorItem || stack.getItem() instanceof PowerArmorItem);
     }
 
-    private static boolean wears(AbstractClientPlayer player, EquipmentSlot slot, Class<?> itemType) {
+    private static boolean ours(AbstractClientPlayer player, EquipmentSlot slot, Class<?> itemType) {
         ItemStack stack = player.getItemBySlot(slot);
         return !stack.isEmpty() && itemType.isInstance(stack.getItem());
     }
