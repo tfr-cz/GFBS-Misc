@@ -71,8 +71,10 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 - 关节设计（续）：肩部袖筒拆成**肩段**（x 4.9 宽、z ±2.7，全在躯干前后表面之内）和**小臂段**（全尺寸）；大腿拆成髋段（±2.06、z ±2.6，收在腰带里面）和主段。这样旋转时扫过邻近部件的是收窄的那一段。
 - 手套比袖筒内缩 0.08（x/z 都缩）——它原来和袖筒共用同一组侧面，两层共面就是手腕处那种一闪一闪的来源。
 - 共面检查：`tools/audit_model.py`（= `F:\DSH\workudit_hazmat.py`）报同一个 mesh 里**同向**共面的面对（背面剔除会吃掉反向的那一类，所以只查同向）；`tools/fix_model_overlaps.py`（= `F:\DSH\workix_overlaps.py`）把撞车盒子里体积较小的那个面内移 0.06 直到清零；两个脚本都可以在仓库根直接跑。改完几何必须跑这两个，`problems: 0` 才提交。
-- 隐去皮肤外层（`HazmatSkinLayers`）：头盔→`hat`，胸甲→`jacket`+`leftSleeve`/`rightSleeve`，护腿→`leftPants`/`rightPants` 置 `visible=false`。**只置 false、从不置回 true**（skinlayers3d 自己也会把这些部件隐藏掉换成 3D 几何，我们重新置 true 会叠一层平面外层；恢复靠每帧 `setModelProperties` 自己重设）。**基础部件 head/body/arm/leg 一律不碰**（脸上要透过视窗看见，而且 Forge `copyModelProperties` 会把玩家模型部件可见性拷到护甲模型上，隐藏基础部件会把套装自己一起隐藏）。
-- 3D 皮肤层（skinlayers3d）：它渲染的是自己生成的网格，且判据用的是**基础部件**可见性，所以隐藏外层部件对它无效；改走它自己的 `PlayerSettings#clearMeshes`（`ThirdPartySkinLayers` 反射调用，mod 不在或改了接口就静默跳过）。清空后下一帧 `SkinUtil.setup3dLayers` 命中皮肤缓存直接返回 false，不会重建网格，因此每帧清空没有性能代价；代价是它也**不会自己重建**，所以脱下护甲时（`SUPPRESSED` 弱引用集合里记过）用一次 `setCurrentSkin(null)` 让它在下一帧从贴图重建。
+- **HBM 路线：护甲即本体**（`HazmatBodyReplacement`，原来叫 `HazmatSkinLayers`）。穿上某件就隐藏玩家模型对应部位：头盔→`head`+`hat`；胸甲→`body`+左右臂+`jacket`+左右袖；护腿→左右腿+左右裤。**只隐藏、从不置回 true**，恢复靠每帧 `setModelProperties` 自己重设。靴子不隐藏任何部件（只穿靴子时隐藏整条腿会让靴子悬空）。
+- 为什么隐藏本体不会把套装一起隐藏：Forge 的护甲渲染是 `getParentModel().copyPropertiesTo(护甲层的双足模型)` → `setPartVisibility(slot)` → `getArmorModelHook()` → `copyModelProperties(护甲层双足模型, 我们的模型)`。可见性来源是 `setPartVisibility`，**不是**玩家模型的部件，所以玩家本体隐藏与套装无关。
+- 副作用（都接受，因为本线不再考虑与其他东西共存）：皮肤双层、`skinlayers3d` 的 3D 皮肤自动关闭（它的网格以基础部件可见为前提）；披风/鞘翅仍会盖在套装外面（1.20.1 里 cape/ear 由各自的 layer 和模型部件渲染，不在 `PlayerModel` 上）；僵尸等非玩家生物穿这套仍会与本体互穿（本逻辑只挂在 `RenderPlayerEvent`）。
+- 第一人称（`HazmatFirstPersonArm`）：挂 `RenderArmEvent`，穿胸甲时取消原版并渲染我们自己的手臂子树（袖+手套+腕环+肩甲），姿态用 `setupAnim(player,0,0,0,0,0)` + 手臂姿态归零复刻原版第一人称；否则屏幕角落会露出一只裸手。
 
 ## 门调节器（新 UI）
 
