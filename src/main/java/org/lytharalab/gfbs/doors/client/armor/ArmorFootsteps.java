@@ -27,6 +27,10 @@ import java.util.WeakHashMap;
  * is played every {@link #STRIDE} blocks, the same cadence the vanilla stride produces, so the suit
  * stomps at the rhythm of the walk rather than at a fixed interval.</p>
  *
+ * <p>Only a complete set makes the sound: boots on their own are just boots. The rule is the same one
+ * {@code HazmatBodyReplacement} uses for hiding the body - all four slots ours - with the volume taken
+ * from the boots, because that is the piece that meets the ground.</p>
+ *
  * <p>Only the local player is handled: vanilla sends other players' steps from the server, and the
  * suits have no server-side behaviour yet ("appearance only"), so their steps stay vanilla for now.</p>
  */
@@ -99,18 +103,20 @@ public final class ArmorFootsteps {
             && !player.isCrouching();
     }
 
+    /** A complete set of one of our suits; the volume follows the boots, the piece on the ground. */
     private static Suit suitOf(Player player) {
+        EquipmentSlot[] slots = {
+            EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
+        };
+        for (EquipmentSlot slot : slots) {
+            ItemStack stack = player.getItemBySlot(slot);
+            if (stack.isEmpty()
+                || !(stack.getItem() instanceof PowerArmorItem || stack.getItem() instanceof HazmatArmorItem)) {
+                return null;
+            }
+        }
         ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
-        if (boots.isEmpty()) {
-            return null;
-        }
-        if (boots.getItem() instanceof PowerArmorItem) {
-            return Suit.POWER;
-        }
-        if (boots.getItem() instanceof HazmatArmorItem) {
-            return Suit.HAZMAT;
-        }
-        return null;
+        return boots.getItem() instanceof PowerArmorItem ? Suit.POWER : Suit.HAZMAT;
     }
 
     /** The power armour is a powered exoskeleton, the hazmat suit is rubber - same clip, very different weight. */

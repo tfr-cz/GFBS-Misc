@@ -96,7 +96,7 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 
 - 素材：NTM 的 `assets/hbm/sounds/footsteps/powered{1,2,3}.ogg`（HBM `sounds.json` 里 `step.powered`，category `player`），复制为 `assets/gfbs_doors/sounds/armor/step_power{1,2,3}.ogg`，`sounds.json` 键 `armor.step_power`，`ModSounds.ARMOR_STEP_POWER` 注册。
 - 触发：`ArmorFootsteps`（`TickEvent.PlayerTickEvent` END）。**不用原版 `playStepSound`**——那样会按脚下方块出草地/石子声；这里自己累计水平位移，每走 1.55 格响一次（和原版步幅节奏接近），音量：动力甲 0.9 / 潜行服 0.45（同一套音效，重量不同），音调 ±6% 随机。
-- 条件：仅本地玩家、`onGround` 且不在水中/岩浆/梯子/载具/飞行/潜行/旁观；只穿靴子（任一护甲）就生效。
+- 条件：**整套判定**——四个槽位都是本模组护甲才响（与 `HazmatBodyReplacement` 的全隐藏判定一致），音量按靴子取（踩地的是它）；仅本地玩家、`onGround`，且不在水中/岩浆/梯子/载具/飞行/潜行/旁观。
 - 已知限制：其他玩家的踩踏仍是原版脚步（服务端发的），因为本线还没有服务端行为。
 
 ## 门调节器（新 UI）
