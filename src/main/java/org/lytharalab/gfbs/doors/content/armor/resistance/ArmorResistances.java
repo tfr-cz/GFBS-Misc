@@ -8,7 +8,6 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,8 +22,21 @@ import java.util.Map;
  * {@link HashMap}s keyed by item.</p>
  */
 public final class ArmorResistances {
+    private static final float[] NO_RESISTANCE = {0.0F, 0.0F};
+
     private static final Map<Item, ArmorResistanceTable> ITEM_TABLES = new HashMap<>();
-    private static final Map<List<Item>, ArmorResistanceTable> SET_TABLES = new HashMap<>();
+    private static final Map<WornSet, ArmorResistanceTable> SET_TABLES = new HashMap<>();
+
+    /**
+     * The four worn pieces, in slot order, with {@code null} for an empty slot.
+     *
+     * <p>This was a {@code List.of(...)} at first, which is wrong twice over: that factory rejects null
+     * elements outright, and an immutable list throws {@link NullPointerException} from
+     * {@code contains(null)} (which is how it crashed the server tick). A record holds nulls happily and
+     * compares them by reference.</p>
+     */
+    record WornSet(Item head, Item chest, Item legs, Item feet) {
+    }
 
     private ArmorResistances() {
     }
@@ -38,13 +50,21 @@ public final class ArmorResistances {
      * The set only counts while all four are worn.
      */
     public static void registerSet(Item helmet, Item chest, Item legs, Item boots, ArmorResistanceTable table) {
-        SET_TABLES.put(List.of(helmet, chest, legs, boots), table);
+        SET_TABLES.put(keyOf(helmet, chest, legs, boots), table);
+    }
+
+    /** Package-private for the regression test: building the key must survive empty slots. */
+    static WornSet keyOf(Item head, Item chest, Item legs, Item feet) {
+        return new WornSet(head, chest, legs, feet);
     }
 
     /** Summed {@code dt} and {@code dr} for this entity against this source. */
     public static float[] resolve(LivingEntity entity, DamageSource source) {
         float threshold = 0.0F;
         float resistance = 0.0F;
+        if (ITEM_TABLES.isEmpty() && SET_TABLES.isEmpty()) {
+            return NO_RESISTANCE;
+        }
 
         for (EquipmentSlot slot : new EquipmentSlot[]{
             EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
@@ -74,15 +94,11 @@ public final class ArmorResistances {
         if (SET_TABLES.isEmpty()) {
             return null;
         }
-        List<Item> worn = List.of(
+        return SET_TABLES.get(keyOf(
             itemOf(entity, EquipmentSlot.HEAD),
             itemOf(entity, EquipmentSlot.CHEST),
             itemOf(entity, EquipmentSlot.LEGS),
-            itemOf(entity, EquipmentSlot.FEET));
-        if (worn.contains(null)) {
-            return null;
-        }
-        return SET_TABLES.get(worn);
+            itemOf(entity, EquipmentSlot.FEET)));
     }
 
     private static Item itemOf(LivingEntity entity, EquipmentSlot slot) {
