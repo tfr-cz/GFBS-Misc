@@ -9,6 +9,7 @@ import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import org.lytharalab.gfbs.doors.client.armor.compat.ClassicBarPresence;
 import org.lytharalab.gfbs.doors.content.armor.PowerArmorCharge;
 
 import java.util.List;
@@ -35,15 +36,15 @@ import java.util.List;
     value = {Dist.CLIENT}
 )
 public final class PowerArmorHud {
-    private static final int SEGMENT_WIDTH = 81;
+    public static final int SEGMENT_WIDTH = 81;
     private static final int INSET = 1;
     private static final int TRACK_HEIGHT = 3;
-    private static final int ROW_STEP = 4;
+    public static final int ROW_STEP = 4;
     private static final int TRACK_COLOR = 0xFF404040;
     /** Vanilla's armour row starts this far above the bottom edge. */
     private static final int ARMOR_ROW_FROM_BOTTOM = 49;
     /** Same left edge the hotbar and the armour row use. */
-    private static final int HOTBAR_LEFT_OFFSET = 91;
+    public static final int HOTBAR_LEFT_OFFSET = 91;
 
     private PowerArmorHud() {
     }
@@ -51,6 +52,10 @@ public final class PowerArmorHud {
     @SubscribeEvent
     public static void onRenderOverlay(RenderGuiOverlayEvent.Post event) {
         if (!VanillaGuiOverlay.ARMOR_LEVEL.id().equals(event.getOverlay().id())) {
+            return;
+        }
+        if (ClassicBarPresence.PRESENT) {
+            // Classic Bar disables the vanilla armour overlay and draws the bars itself, above its own rows.
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
@@ -74,14 +79,21 @@ public final class PowerArmorHud {
             if (!PowerArmorCharge.isPowerArmor(piece)) {
                 continue;
             }
-            int top = armorRow - ROW_STEP * (index + 1);
-            float progress = (float) PowerArmorCharge.get(piece) / (float) PowerArmorCharge.MAX_CHARGE;
-            graphics.fill(left, top, left + SEGMENT_WIDTH, top + TRACK_HEIGHT, TRACK_COLOR);
-            int fillEnd = fillEnd(left, progress);
-            if (fillEnd > left + INSET) {
-                graphics.fill(left + INSET, top + INSET, fillEnd, top + INSET + 1, 0xFF000000 | fillColor(progress));
-            }
+            drawRow(graphics, left, armorRow - ROW_STEP * (index + 1), chargeRatio(piece));
         }
+    }
+
+    /** One track plus its 1px fill; shared with the Classic Bar adapter so both paths look identical. */
+    public static void drawRow(GuiGraphics graphics, int left, int top, float progress) {
+        graphics.fill(left, top, left + SEGMENT_WIDTH, top + TRACK_HEIGHT, TRACK_COLOR);
+        int fillEnd = fillEnd(left, progress);
+        if (fillEnd > left + INSET) {
+            graphics.fill(left + INSET, top + INSET, fillEnd, top + INSET + 1, 0xFF000000 | fillColor(progress));
+        }
+    }
+
+    public static float chargeRatio(ItemStack piece) {
+        return (float) PowerArmorCharge.get(piece) / (float) PowerArmorCharge.MAX_CHARGE;
     }
 
     /** The fill colour for a charge ratio: the same green-to-red ramp the durability bar uses. */
