@@ -89,6 +89,8 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 - 渲染：`PowerArmorLayer`（与视窗同一个渲染层列表，经 `EntityRenderersEvent.AddLayers` 挂上）。每个物件按 `T(pivot)·R·T(-pivot)` 写进节点 localMatrix——因为 OBJ 顶点是**绝对坐标**，而 `ModelPart.translateAndRotate` 期待的是 pivot 相对坐标；然后整体 `scale(1/16)` 画一次。双面渲染（HBM 导出的缠绕不一致）。
 - `PowerArmorItem` 让原版护甲层画一个空的 `HumanoidModel`（`EmptyArmorModel`），避免双层图像；本体隐藏仍由 `HazmatBodyReplacement` 负责（已泛化到两种护甲；动力甲的护腿包整条腿，所以单独穿也隐藏腿，而潜行服护腿要和靴子一起穿才隐藏）。
 - 第一人称：`HazmatFirstPersonArm` 里对动力甲走同一条路——只显示该手臂的节点，`scale(1/16)` 后按 `-pivot` 平移再画（第一人称的 pose 已经在手臂轴上、手臂旋转被归零）。
+- **套装效果（照 HBM 抄的机制）**：NTM 里 `ArmorFSB.handleTick` 每 tick 把**胸甲**上登记的 `effects` 全部重新施加一遍，条件是 `hasFSBArmor`（四个槽位同材质全套，且 `isArmorEnabled` 有电）。T-51b 在 `ModItemsArmor` 里只登记了一条：`new PotionEffect(Potion.<id>, 20, 0)` —— 1 秒、等级 I、每 tick 刷新，所以脱下 1 秒内自动消失。
+- 本模组对应实现：`PowerArmorSetBonus`（服务端 tick；效果是服务端权威的），四件都是 `PowerArmorItem` 时施加 `MOVEMENT_SPEED` 等级 I、20 tick、ambient、无粒子，剩余时间低于 10 tick 才补，且不会顶掉更强的同类效果。**两处已知差异**：①没有能量系统，所以没有 `isArmorEnabled` 的电量门槛；②HBM 那条效果的混淆字段（`Potion.field_76420_g`）离线无法解析成具体药水名，按“加速”的意图映射为移动速度，若实际应为急迫（挖掘加速）改一行即可。
 - 物品：`power_helmet/chest/legs/boots`，创造模式页签里，**暂无配方**（外观优先）。
 - 验收：`PowerArmorModelTest` 解析四个 OBJ，断言物件名、材质不透明、贴图字节内嵌、顶点仍在 biped 空间；离线外观预览 `F:\DSH\work\preview_power_armor.py` → `build/reports/power-armor-preview.png`。
 
