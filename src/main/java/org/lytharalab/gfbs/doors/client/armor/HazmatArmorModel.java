@@ -85,8 +85,8 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
             .addBox(-4.97F, -9.22F, -4.97F, 9.94F, 0.67F, 9.94F),      // crown step
             PartPose.ZERO);
         head.addOrReplaceChild("seal", boxes(DARK_U, DARK_V)
-            .addBox(-4.51F, -1.5F, -4.51F, 9.02F, 1.9F, 9.02F)           // neck seal, fills the gorget opening
-            .addBox(-4.05F, 0.4F, -4.05F, 8.1F, 0.55F, 8.1F),         // seal lip
+            .addBox(-4.0F, -1.5F, -2.7F, 8.0F, 1.9F, 5.4F)              // neck seal, inside the torso outline
+            .addBox(-3.6F, 0.4F, -2.4F, 7.2F, 0.55F, 4.8F),           // seal lip
             PartPose.ZERO);
         head.addOrReplaceChild("face", boxes(DARK_U, DARK_V)
             .addBox(-4.78F, -6.62F, -6.07F, 9.57F, 1.34F, 1.38F)        // brow brim
@@ -138,18 +138,14 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
         PartDefinition body = mesh.getRoot().getChild("body");
 
         body.addOrReplaceChild("torso", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(-4.97F, -0.77F, -2.76F, 9.94F, 13.63F, 5.52F),
+            .addBox(-4.97F, -1.34F, -2.76F, 9.94F, 14.2F, 5.52F),
             PartPose.ZERO);
         body.addOrReplaceChild("panelling", boxes(SHADOW_U, SHADOW_V)
             .addBox(-5.06F, 2.5F, -2.85F, 10.12F, 0.96F, 5.7F)         // waist seam
             .addBox(-5.06F, 8.45F, -2.79F, 10.12F, 0.86F, 5.64F)         // chest seam
             .addBox(-5.06F, -0.67F, -2.85F, 10.12F, 2.3F, 5.7F),       // shoulder yoke
             PartPose.ZERO);
-        body.addOrReplaceChild("collar", boxes(TRIM_U, TRIM_V)
-            .addBox(-6.05F, -1.34F, -6.05F, 12.1F, 1.14F, 0.6F)          // gorget front
-            .addBox(-6.05F, -1.34F, 5.45F, 12.1F, 1.14F, 0.6F)           // gorget back
-            .addBox(-6.05F, -1.34F, -5.45F, 0.6F, 1.14F, 10.9F)          // gorget left
-            .addBox(5.45F, -1.34F, -5.45F, 0.6F, 1.14F, 10.9F)           // gorget right
+        body.addOrReplaceChild("chestPlate", boxes(TRIM_U, TRIM_V)
             .addBox(-4.42F, 3.07F, -3.68F, 8.83F, 5.95F, 1.1F),          // chest plate
             PartPose.ZERO);
         body.addOrReplaceChild("harness", boxes(ACCENT_U, ACCENT_V)
@@ -239,7 +235,7 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
     private static void legBoxes(MeshDefinition mesh, String part) {
         PartDefinition leg = mesh.getRoot().getChild(part);
         leg.addOrReplaceChild("thigh", boxes(PRIMARY_U, PRIMARY_V)
-            .addBox(-2.06F, -1.44F, -2.6F, 4.12F, 3.5F, 5.2F)          // hip section, tucked under the belt
+            .addBox(-2.06F, 0.7F, -2.6F, 4.12F, 1.36F, 5.2F)           // hip section, just under the belt
             .addBox(-2.26F, 1.75F, -2.82F, 4.51F, 4.68F, 5.64F),       // thigh
             PartPose.ZERO);
         leg.addOrReplaceChild("thighSeam", boxes(SHADOW_U, SHADOW_V)
