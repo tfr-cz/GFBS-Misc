@@ -48,21 +48,18 @@ public final class DoorRenderer implements BlockEntityRenderer<DoorBlockEntity> 
 
     private static void applyLargeScale(DoorSpec spec, Direction facing, PoseStack poseStack) {
         if (spec.baseId != null) {
-            DoorSpec base = (DoorSpec)DoorSpecs.BY_ID.get(spec.baseId);
-            if (base != null) {
-                int[] oldRot = DoorGeometry.rotateDims(base.dimensions, facing);
-                int[] newRot = DoorGeometry.rotateDims(spec.dimensions, facing);
-                if (facing != Direction.NORTH && facing != Direction.SOUTH) {
-                    double oldLow = (double)(-oldRot[2]) - 0.5;
-                    double newLow = (double)(-newRot[2]) - 0.5;
-                    poseStack.translate(0.0, 0.0, (double)((float)(newLow - (double)spec.scaleW * oldLow)));
-                    poseStack.scale(1.0F, spec.scaleH, spec.scaleW);
-                } else {
-                    double oldLow = (double)(-oldRot[4]) - 0.5;
-                    double newLow = (double)(-newRot[4]) - 0.5;
-                    poseStack.translate((double)((float)(newLow - (double)spec.scaleW * oldLow)), 0.0, 0.0);
-                    poseStack.scale(spec.scaleW, spec.scaleH, 1.0F);
-                }
+            int[] oldRot = spec.base().rotatedDims(facing);
+            int[] newRot = spec.rotatedDims(facing);
+            if (facing != Direction.NORTH && facing != Direction.SOUTH) {
+                double oldLow = (double)(-oldRot[2]) - 0.5;
+                double newLow = (double)(-newRot[2]) - 0.5;
+                poseStack.translate(0.0, 0.0, (double)((float)(newLow - (double)spec.scaleW * oldLow)));
+                poseStack.scale(1.0F, spec.scaleH, spec.scaleW);
+            } else {
+                double oldLow = (double)(-oldRot[4]) - 0.5;
+                double newLow = (double)(-newRot[4]) - 0.5;
+                poseStack.translate((double)((float)(newLow - (double)spec.scaleW * oldLow)), 0.0, 0.0);
+                poseStack.scale(spec.scaleW, spec.scaleH, 1.0F);
             }
         }
     }
@@ -104,7 +101,7 @@ public final class DoorRenderer implements BlockEntityRenderer<DoorBlockEntity> 
         byte state,
         int extraHeight
     ) {
-        DoorSpec shape = spec.baseId == null ? spec : (DoorSpec)DoorSpecs.BY_ID.getOrDefault(spec.baseId, spec);
+        DoorSpec shape = spec.base();
         String var11 = shape.id;
         switch (var11) {
             case "vault_door":

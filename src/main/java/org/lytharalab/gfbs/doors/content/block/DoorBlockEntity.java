@@ -56,6 +56,7 @@ public class DoorBlockEntity extends BlockEntity {
     private transient boolean silentTransition;
     private final Set<BlockPos> activatedBlocks = new HashSet<>();
     private int extraHeight;
+    private DoorSpec cachedSpec;
 
     public DoorBlockEntity(BlockPos pos, BlockState state) {
         super((BlockEntityType)ModBlockEntities.DOOR.get(), pos, state);
@@ -64,7 +65,12 @@ public class DoorBlockEntity extends BlockEntity {
     }
 
     public DoorSpec getSpec() {
-        return ((DoorBlock)this.getBlockState().getBlock()).spec();
+        DoorSpec spec = this.cachedSpec;
+        if (spec == null) {
+            spec = ((DoorBlock)this.getBlockState().getBlock()).spec();
+            this.cachedSpec = spec;
+        }
+        return spec;
     }
 
     public boolean isCore() {

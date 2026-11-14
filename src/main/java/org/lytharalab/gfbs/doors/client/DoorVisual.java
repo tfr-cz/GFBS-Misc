@@ -25,6 +25,7 @@ public final class DoorVisual {
     private final GltfAsset asset;
     private final GltfInstance instance;
     private final Map<String, int[]> partNodes = new LinkedHashMap<>();
+    private final Map<String, boolean[]> partMasks = new LinkedHashMap<>();
     private final Map<String, Integer> partMaterial = new HashMap<>();
     private static final GltfMaterialOverride ALPHA_CUTOUT = GltfMaterialOverride.builder()
         .alphaMode(AlphaMode.MASK)
@@ -57,12 +58,15 @@ public final class DoorVisual {
             }
 
             int[] arr = new int[nodes.size()];
+            boolean[] mask = new boolean[this.nodeCount];
 
             for (int ix = 0; ix < arr.length; ix++) {
                 arr[ix] = (Integer)nodes.get(ix);
+                mask[arr[ix]] = true;
             }
 
             this.partNodes.put(part, arr);
+            this.partMasks.put(part, mask);
         }
     }
 
@@ -87,11 +91,10 @@ public final class DoorVisual {
     private void showPart(String part) {
         if (!part.equals(this.activePart)) {
             this.activePart = part;
-            int[] wanted = "\u0000all".equals(part) ? null : (int[])this.partNodes.get(part);
+            boolean[] wanted = ALL_VISIBLE.equals(part) ? null : this.partMasks.get(part);
 
             for (int i = 0; i < this.nodeCount; i++) {
-                boolean visible = wanted == null || contains(wanted, i);
-                this.instance.setNodeVisible(i, visible);
+                this.instance.setNodeVisible(i, wanted == null || wanted[i]);
             }
 
             if (!"\u0000all".equals(part)) {
@@ -108,15 +111,6 @@ public final class DoorVisual {
         }
     }
 
-    private static boolean contains(int[] arr, int value) {
-        for (int v : arr) {
-            if (v == value) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     public void setNodeMatrix(String part, float[] columnMajor) {
         for (int i = 0; i < this.nodeCount; i++) {
@@ -178,6 +172,7 @@ public final class DoorVisual {
 
     public void close() {
         this.partNodes.clear();
+        this.partMasks.clear();
         this.partMaterial.clear();
         this.materialIndex.clear();
         this.instance.close();

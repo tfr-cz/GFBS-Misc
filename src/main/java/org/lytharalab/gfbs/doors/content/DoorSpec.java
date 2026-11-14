@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import net.minecraft.core.Direction;
 
 public final class DoorSpec {
     public final String id;
@@ -29,6 +30,49 @@ public final class DoorSpec {
     public final String loop2;
     public final float hardness;
     public final float resistance;
+
+    /** Precomputed per-facing widths so the renderer never allocates while drawing. */
+    private final int[][] rotatedDims;
+    private DoorSpec base;
+
+    public int[] rotatedDims(Direction dir) {
+        return this.rotatedDims[dir.ordinal()];
+    }
+
+    /**
+     * The spec this one is a scaled variant of, or itself when it is not a variant.
+     *
+     * <p>{@link DoorSpecs#BY_ID} is null while the specs are being constructed, hence the guard: a lookup during
+     * static init must not throw, it just falls back to this spec.</p>
+     */
+    public DoorSpec base() {
+        String variantOf = this.baseId;
+        if (variantOf == null) {
+            return this;
+        }
+        DoorSpec cached = this.base;
+        if (cached != null) {
+            return cached;
+        }
+        Map<String, DoorSpec> byId = DoorSpecs.BY_ID;
+        if (byId == null) {
+            return this;
+        }
+        DoorSpec found = byId.get(variantOf);
+        if (found == null) {
+            return this;
+        }
+        this.base = found;
+        return found;
+    }
+
+    private static int[][] computeRotatedDims(int[] dimensions) {
+        int[][] out = new int[Direction.values().length][];
+        for (Direction dir : Direction.values()) {
+            out[dir.ordinal()] = DoorGeometry.rotateDims(dimensions, dir).clone();
+        }
+        return out;
+    }
 
     private DoorSpec(DoorSpec.Builder b) {
         this.id = b.id;
@@ -56,6 +100,7 @@ public final class DoorSpec {
         this.loop2 = b.loop2;
         this.hardness = b.hardness;
         this.resistance = b.resistance;
+        this.rotatedDims = computeRotatedDims(this.dimensions);
     }
 
     public int skinCount() {
