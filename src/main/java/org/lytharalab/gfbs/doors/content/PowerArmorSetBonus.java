@@ -3,13 +3,11 @@ package org.lytharalab.gfbs.doors.content;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
+import org.lytharalab.gfbs.doors.content.armor.PowerArmorCharge;
 
 /**
  * The T-51b set bonus, ported from HBM's {@code ArmorFSB.handleTick}.
@@ -47,7 +45,12 @@ public final class PowerArmorSetBonus {
             return;
         }
         Player player = event.player;
-        if (player.level().isClientSide() || !PowerArmorItem.isCompleteSet(player)) {
+        if (player.level().isClientSide() || !PowerArmorCharge.hasFullSet(player)) {
+            return;
+        }
+        // HBM drains every worn piece on its own armour tick; an empty piece also switches the set off.
+        PowerArmorCharge.drainWornSet(player);
+        if (!PowerArmorCharge.hasPoweredSet(player)) {
             return;
         }
 
@@ -62,14 +65,4 @@ public final class PowerArmorSetBonus {
         player.addEffect(new MobEffectInstance(EFFECT, DURATION, AMPLIFIER, true, false, true));
     }
 
-    private static boolean wearsCompleteSet(Player player) {
-        for (EquipmentSlot slot : new EquipmentSlot[]{
-            EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
-            ItemStack stack = player.getItemBySlot(slot);
-            if (stack.isEmpty() || !(stack.getItem() instanceof PowerArmorItem)) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

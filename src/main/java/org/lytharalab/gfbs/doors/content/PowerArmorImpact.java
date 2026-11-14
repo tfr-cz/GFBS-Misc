@@ -15,7 +15,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
+import org.lytharalab.gfbs.doors.content.armor.PowerArmorCharge;
 
 /**
  * HBM's jump / landing behaviour for the T-51b: {@code handleJump}, {@code handleFall} and the
@@ -53,7 +53,7 @@ public final class PowerArmorImpact {
     @SubscribeEvent
     public static void onJump(LivingEvent.LivingJumpEvent event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide()
-            || !PowerArmorItem.isCompleteSet(player)) {
+            || !PowerArmorCharge.hasPoweredSet(player)) {
             return;
         }
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -63,7 +63,7 @@ public final class PowerArmorImpact {
     @SubscribeEvent
     public static void onFall(LivingFallEvent event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide()
-            || !PowerArmorItem.isCompleteSet(player)) {
+            || !PowerArmorCharge.hasPoweredSet(player)) {
             return;
         }
         if (event.getDistance() > 0.5F) {

@@ -13,6 +13,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
 import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
+import org.lytharalab.gfbs.doors.content.armor.PowerCellItem;
 import org.lytharalab.gfbs.doors.content.block.DoorConfiguratorItem;
 import org.lytharalab.gfbs.doors.content.block.DoorItem;
 
@@ -30,6 +31,7 @@ public final class ModItems {
     public static final RegistryObject<Item> POWER_CHEST;
     public static final RegistryObject<Item> POWER_LEGS;
     public static final RegistryObject<Item> POWER_BOOTS;
+    public static final RegistryObject<Item> POWER_CELL;
 
     private ModItems() {
     }
@@ -63,5 +65,6 @@ public final class ModItems {
         POWER_CHEST = ITEMS.register("power_chest", () -> new PowerArmorItem(ArmorItem.Type.CHESTPLATE, new Properties()));
         POWER_LEGS = ITEMS.register("power_legs", () -> new PowerArmorItem(ArmorItem.Type.LEGGINGS, new Properties()));
         POWER_BOOTS = ITEMS.register("power_boots", () -> new PowerArmorItem(ArmorItem.Type.BOOTS, new Properties()));
+        POWER_CELL = ITEMS.register("power_cell", () -> new PowerCellItem(new Properties()));
     }
 }

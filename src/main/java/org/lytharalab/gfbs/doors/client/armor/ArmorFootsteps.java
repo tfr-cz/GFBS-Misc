@@ -3,16 +3,14 @@ package org.lytharalab.gfbs.doors.client.armor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.lytharalab.gfbs.doors.content.ModSounds;
-import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
+import org.lytharalab.gfbs.doors.content.armor.PowerArmorCharge;
 
 import java.util.Collections;
 import java.util.Map;
@@ -68,7 +66,7 @@ public final class ArmorFootsteps {
         float moved = player.moveDist;
         Float previous = LAST_MOVE.put(player, moved);
 
-        if (!PowerArmorItem.isCompleteSet(player) || !canStep(player)) {
+        if (!PowerArmorCharge.hasPoweredSet(player) || !canStep(player)) {
             PENDING.put(player, 0.0F);
             return;
         }

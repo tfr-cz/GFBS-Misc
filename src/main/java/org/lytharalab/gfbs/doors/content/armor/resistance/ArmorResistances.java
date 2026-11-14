@@ -5,6 +5,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.lytharalab.gfbs.doors.content.armor.PowerArmorCharge;
+import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -80,7 +82,7 @@ public final class ArmorResistances {
             }
         }
 
-        ArmorResistanceTable set = wornSetTable(entity);
+        ArmorResistanceTable set = isUnpoweredPowerSet(entity) ? null : wornSetTable(entity);
         if (set != null) {
             ArmorResistance entry = set.resolve(source);
             threshold += entry.threshold();
@@ -88,6 +90,22 @@ public final class ArmorResistances {
         }
 
         return new float[]{threshold, resistance};
+    }
+
+    /**
+     * A T-51b set with any piece flat is "worn but dead": its set resistances must not apply, matching
+     * HBM, where {@code hasFSBArmor} fails as soon as one piece reports {@code charge <= 0}.
+     */
+    private static boolean isUnpoweredPowerSet(LivingEntity entity) {
+        boolean powerArmor = false;
+        for (EquipmentSlot slot : new EquipmentSlot[]{
+            EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+            if (entity.getItemBySlot(slot).getItem() instanceof PowerArmorItem) {
+                powerArmor = true;
+                break;
+            }
+        }
+        return powerArmor && !PowerArmorCharge.hasPoweredSet(entity);
     }
 
     private static ArmorResistanceTable wornSetTable(LivingEntity entity) {

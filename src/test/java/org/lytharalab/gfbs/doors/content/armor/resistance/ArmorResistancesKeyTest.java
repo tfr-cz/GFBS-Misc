@@ -1,10 +1,8 @@
 package org.lytharalab.gfbs.doors.content.armor.resistance;
 
-import net.minecraft.SharedConstants;
-import net.minecraft.server.Bootstrap;
 import net.minecraft.world.item.Item;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.lytharalab.gfbs.doors.TestBootstrap;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,18 +19,6 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class ArmorResistancesKeyTest {
     private static boolean itemsUsable;
 
-    @BeforeAll
-    static void bootstrapRegistries() {
-        try {
-            SharedConstants.tryDetectVersion();
-            Bootstrap.bootStrap();
-            itemsUsable = true;
-        } catch (Throwable ignored) {
-            // A plain JVM without the full data pack cannot create items; the null-only checks still run.
-            itemsUsable = false;
-        }
-    }
-
     @Test
     void emptySlotsMustNotThrow() {
         ArmorResistances.WornSet none = assertDoesNotThrow(
@@ -42,7 +28,7 @@ class ArmorResistancesKeyTest {
 
     @Test
     void partialSetsAreValidKeys() {
-        assumeTrue(itemsUsable, "item registry unavailable in this environment");
+        assumeTrue(TestBootstrap.itemsAvailable(), "item registry unavailable in this environment");
         Item helmet = new Item(new Item.Properties());
         Item chest = new Item(new Item.Properties());
         ArmorResistances.WornSet first = assertDoesNotThrow(

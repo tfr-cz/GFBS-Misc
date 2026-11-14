@@ -97,5 +97,7 @@
   "item.gfbs_doors.power_chest": "T-51b Power Armor Chestplate",
   "item.gfbs_doors.power_legs": "T-51b Power Armor Leggings",
   "item.gfbs_doors.power_boots": "T-51b Power Armor Boots",
-  "death.attack.power_armor_impact": "was pulverised by a power armour slam"
+  "death.attack.power_armor_impact": "was pulverised by a power armour slam",
+  "item.gfbs_doors.power_cell": "Power Cell",
+  "tooltip.gfbs_doors.power_cell": "Right-click to fully recharge the worn T-51b set"
 }

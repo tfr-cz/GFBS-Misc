@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "gfbs_doors:item/power_cell"
+  }
+}

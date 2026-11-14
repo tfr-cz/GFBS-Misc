@@ -4,9 +4,13 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraft.world.damagesource.DamageTypes;
 import org.lytharalab.gfbs.doors.client.armor.EmptyArmorModel;
@@ -15,6 +19,7 @@ import org.lytharalab.gfbs.doors.content.armor.resistance.ArmorResistances;
 import org.lytharalab.gfbs.doors.content.armor.resistance.DamageCategory;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -69,6 +74,43 @@ public final class PowerArmorItem extends ArmorItem {
             }
         }
         return true;
+    }
+
+    /**
+     * The durability bar is repurposed as the charge gauge, exactly like HBM: hidden while full, and it
+     * shows how much is left from the charge ratio rather than from damage. 1.20.1 asks for the bar in
+     * three parts ({@code isBarVisible} / {@code getBarWidth} / {@code getBarColor}) where 1.7.10 had
+     * {@code showDurabilityBar} / {@code getDurabilityForDisplay}.
+     */
+    @Override
+    public boolean isBarVisible(ItemStack stack) {
+        return PowerArmorCharge.get(stack) < PowerArmorCharge.MAX_CHARGE;
+    }
+
+    @Override
+    public int getBarWidth(ItemStack stack) {
+        return Math.round(13.0F * (float) PowerArmorCharge.get(stack) / (float) PowerArmorCharge.MAX_CHARGE);
+    }
+
+    @Override
+    public int getBarColor(ItemStack stack) {
+        return 0x00FF00;
+    }
+
+    /**
+     * HBM's {@code ArmorFSBPowered#setDamage}: the suit never wears out, incoming durability damage is paid
+     * in charge instead ({@code amount * consumption}). Every armour damage path funnels through here, so
+     * one override covers both combat and any other source of durability loss.
+     */
+    @Override
+    public void setDamage(ItemStack stack, int damage) {
+        PowerArmorCharge.discharge(stack, (long) damage * PowerArmorCharge.DAMAGE_CONSUMPTION);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(Component.literal("Charge: " + PowerArmorCharge.shortNumber(PowerArmorCharge.get(stack))
+            + " / " + PowerArmorCharge.shortNumber(PowerArmorCharge.MAX_CHARGE)).withStyle(ChatFormatting.GRAY));
     }
 
     @Override

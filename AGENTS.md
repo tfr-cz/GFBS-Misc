@@ -30,6 +30,9 @@ their resources out of this one.
 - `AuralisBackend` / `GltfCompat` resolve every method in one all-or-nothing `try`: one renamed method silently drops
   the whole feature (it falls back to the vanilla path). Check the target jar with `javap -p` before trusting it.
 - Auralis bypasses the vanilla `BLOCKS` mix, so its volume must be `base * BLOCKS * MASTER`; vanilla only needs `base`.
+- An `ItemStack` cannot be created in a unit test on this machine: `Bootstrap.bootStrap()` dies inside Forge's
+  `NetworkHooks.init`. Keep the logic worth testing in pure helpers, and gate item-level tests behind
+  `assumeTrue(TestBootstrap.itemsAvailable())`.
 
 ## Runtime signals
 
