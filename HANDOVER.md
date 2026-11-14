@@ -134,3 +134,10 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 4. 本工程尚未做版本管理初始化（`git init` 由接手者执行；`.gitignore` 已就位）。
 5. 反编译产物里保留了部分 `(Type)obj` 强转和 `varN` 局部名；重构时顺手清理，但不要为了"好看"改动逻辑。
 6. 防护服目前是**纯几何粗模**：颜色靠贴图象限纯色，没有高光/磨损细节；头盔灯没有自发光层；只有玩家能显示（其他生物没接渲染层）。
+
+## 工程护栏
+
+- `.githooks/pre-commit`：`./gradlew test` + `tools/compat_check.py` + `tools/null_safety_check.py`，任一失败即拦截提交；自己找 JDK 17（PATH 上的 java 可能是 8）。启用：`git config core.hooksPath .githooks`。
+- `tools/null_safety_check.py`：两条零误报规则 —— `contains(null)`/`indexOf(null)`、`List.of/Set.of/Map.of` 里带字面量 `null`。前者正是那次服务端 tick 崩溃的形状。
+- 不做 CI 的原因：构建需要 `-Pgfbs.localMaven` 指向本机 maven，托管 runner 暂时构建不了。
+- 给 agent 的入口文档是 `AGENTS.md`（指针表 + 七个已踩过的坑），不是这份 HANDOVER。

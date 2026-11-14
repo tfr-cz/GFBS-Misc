@@ -18,6 +18,13 @@ Minecraft **Forge 1.20.1** mod（`modid = gfbs_misc`）：NTM 风格的可配置
 ./gradlew build --offline        # 产出 build/libs/gfbs-misc-0.1.0.jar
 ./gradlew test --offline         # 模型资源解析 + 抗性公式单测
 python tools/compat_check.py     # 资源/命名空间/注册一致性自检
+python tools/null_safety_check.py # 集合空值红线（contains(null) / List.of(null)）
+```
+
+三项检查已串成 pre-commit 钩子，每个 clone 启用一次：
+
+```bash
+git config core.hooksPath .githooks
 ```
 
 ### 依赖
@@ -31,7 +38,8 @@ python tools/compat_check.py     # 资源/命名空间/注册一致性自检
 
 - [`HANDOVER.md`](HANDOVER.md) —— 模块地图、内容清单、渲染/尺寸约定、已知问题
 - [`BASELINE.md`](BASELINE.md) —— 这一线从 jar 反编译重建的来源、校验与丢失信息
-- [`tools/`](tools) —— `compat_check.py`（资源自检）、`import_hbm_power_armor.py`（从 NTM jar 导入 T-51b）、`audit_model.py` / `fix_model_overlaps.py`（盒子模型共面/穿模检查）
+- [`AGENTS.md`](AGENTS.md) —— 给 agent 的指针表 + 已经踩过的坑
+- [`tools/`](tools) —— `compat_check.py`（资源自检）、`null_safety_check.py`（集合空值红线）、`import_hbm_power_armor.py`（从 NTM jar 导入 T-51b）、`audit_model.py` / `fix_model_overlaps.py`（盒子模型共面/穿模检查）
 
 ## 第三方素材
 
