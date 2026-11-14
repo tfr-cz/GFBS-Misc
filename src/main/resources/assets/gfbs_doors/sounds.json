@@ -217,19 +217,11 @@
       }
     ]
   },
-  "armor.step_power": {
+  "armor.step_metal": {
     "category": "player",
     "sounds": [
       {
-        "name": "gfbs_doors:armor/step_power1",
-        "attenuation_distance": 16
-      },
-      {
-        "name": "gfbs_doors:armor/step_power2",
-        "attenuation_distance": 16
-      },
-      {
-        "name": "gfbs_doors:armor/step_power3",
+        "name": "gfbs_doors:armor/step_metal",
         "attenuation_distance": 16
       }
     ]

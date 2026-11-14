@@ -12,7 +12,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.lytharalab.gfbs.doors.content.ModSounds;
-import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
 import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
 
 import java.util.Collections;
@@ -20,19 +19,17 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * Heavy footsteps for the suits, using HBM's own {@code footsteps/powered1..3}.
+ * The T-51b's footstep, ported from HBM instead of invented.
  *
- * <p>Vanilla resolves a step sound from the block under the player, which would give the suit the
- * sound of grass or gravel. Instead the distance the player actually walks is accumulated and a step
- * is played every {@link #STRIDE} blocks, the same cadence the vanilla stride produces, so the suit
- * stomps at the rhythm of the walk rather than at a fixed interval.</p>
+ * <p>In NTM the T-51b is registered with {@code .setStep("hbm:step.metal")} - the {@code powered1..3}
+ * set belongs to the other powered suits - and {@code ArmorFSB#steppy} plays it as
+ * {@code player.playSound(sound, 0.25F, 1.0F)}: volume 0.25, pitch fixed at 1.0, no randomisation. The
+ * rhythm comes from the same counter vanilla uses, {@code distanceWalkedOnStepModified} (renamed
+ * {@code moveDist} after 1.14, still {@code += movement * 0.6}), and it only fires when the block under
+ * the feet is not air. All of that is reproduced here - the first version used the wrong clip, doubled
+ * the volume, jittered the pitch and drove the cadence from horizontal distance instead.</p>
  *
- * <p>Only a complete set makes the sound: boots on their own are just boots. The rule is the same one
- * {@code HazmatBodyReplacement} uses for hiding the body - all four slots ours - with the volume taken
- * from the boots, because that is the piece that meets the ground.</p>
- *
- * <p>Only the local player is handled: vanilla sends other players' steps from the server, and the
- * suits have no server-side behaviour yet ("appearance only"), so their steps stay vanilla for now.</p>
+ * <p>HBM has no custom step sound for the hazmat suit, so only the complete T-51b set clicks.</p>
  */
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(
@@ -40,13 +37,15 @@ import java.util.WeakHashMap;
     value = {Dist.CLIENT}
 )
 public final class ArmorFootsteps {
-    /** Blocks per step, converted to walkDist units: Entity#move adds 0.6 per block walked. */
-    private static final double BLOCKS_PER_STEP = 1.55D;
-    private static final float STEP_UNITS = (float) (BLOCKS_PER_STEP * 0.6D);
-    /** A jump this large is a teleport, not a stride; drop it instead of firing a step. */
+    /** HBM plays at 0.25; the sample is already a heavy metal step. */
+    private static final float VOLUME = 0.25F;
+    private static final float PITCH = 1.0F;
+    /** One unit of moveDist is one vanilla stride (moveDist gains 0.6 per block walked). */
+    private static final float STEP_UNITS = 1.0F;
+    /** A jump this large is a teleport, not a stride. */
     private static final float MAX_STRIDE_DELTA = 4.0F;
 
-    private static final Map<Player, Float> LAST_WALK = Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<Player, Float> LAST_MOVE = Collections.synchronizedMap(new WeakHashMap<>());
     private static final Map<Player, Float> PENDING = Collections.synchronizedMap(new WeakHashMap<>());
 
     private ArmorFootsteps() {
@@ -58,21 +57,18 @@ public final class ArmorFootsteps {
             return;
         }
         Player player = event.player;
-        // Only the local player: remote players' steps already arrive from the server, and adding a
-        // second clip on top of vanilla's would double every step.
+        // Local player only: remote players' steps already arrive from the server.
         if (!player.level().isClientSide() || Minecraft.getInstance().player != player
             || !(player instanceof AbstractClientPlayer)) {
             return;
         }
 
-        // Entity.xo is only written on teleports in 1.20.1 (absMoveTo/moveTo), so a per-tick
-        // "getX() - xo" delta is almost always zero - which is why this never fired. walkDist is the
-        // stride counter Entity#move actually moves, so it is the right thing to read.
-        float walked = player.walkDist;
-        Float previous = LAST_WALK.put(player, walked);
+        // moveDist is the counter Entity#move advances. Entity.xo is only written on teleports, which is
+        // why an "x - xo" delta never worked.
+        float moved = player.moveDist;
+        Float previous = LAST_MOVE.put(player, moved);
 
-        Suit suit = suitOf(player);
-        if (suit == null || !onFoot(player)) {
+        if (!wearsCompleteSet(player) || !canStep(player)) {
             PENDING.put(player, 0.0F);
             return;
         }
@@ -80,9 +76,8 @@ public final class ArmorFootsteps {
             return;
         }
 
-        float delta = walked - previous;
+        float delta = moved - previous;
         if (delta <= 0.0F || delta > MAX_STRIDE_DELTA) {
-            // Standing still, or the player was moved rather than walked.
             PENDING.put(player, 0.0F);
             return;
         }
@@ -94,13 +89,12 @@ public final class ArmorFootsteps {
         }
         PENDING.put(player, pending - STEP_UNITS);
 
-        float pitch = 1.0F + (player.getRandom().nextFloat() - 0.5F) * 0.12F;
         player.level().playLocalSound(player.getX(), player.getY(), player.getZ(),
-            ModSounds.ARMOR_STEP_POWER.get(), SoundSource.PLAYERS,
-            suit.volume, pitch, false);
+            ModSounds.ARMOR_STEP_METAL.get(), SoundSource.PLAYERS, VOLUME, PITCH, false);
     }
 
-    private static boolean onFoot(Player player) {
+    /** HBM's conditions: on the ground, no liquid or ladder, not riding or flying, with a floor below. */
+    private static boolean canStep(Player player) {
         return player.onGround()
             && !player.isInWater()
             && !player.isInLava()
@@ -108,34 +102,17 @@ public final class ArmorFootsteps {
             && !player.isPassenger()
             && !player.getAbilities().flying
             && !player.isSpectator()
-            && !player.isCrouching();
+            && !player.getBlockStateOn().isAir();
     }
 
-    /** A complete set of one of our suits; the volume follows the boots, the piece on the ground. */
-    private static Suit suitOf(Player player) {
-        EquipmentSlot[] slots = {
-            EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET
-        };
-        for (EquipmentSlot slot : slots) {
+    private static boolean wearsCompleteSet(Player player) {
+        for (EquipmentSlot slot : new EquipmentSlot[]{
+            EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
             ItemStack stack = player.getItemBySlot(slot);
-            if (stack.isEmpty()
-                || !(stack.getItem() instanceof PowerArmorItem || stack.getItem() instanceof HazmatArmorItem)) {
-                return null;
+            if (stack.isEmpty() || !(stack.getItem() instanceof PowerArmorItem)) {
+                return false;
             }
         }
-        ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
-        return boots.getItem() instanceof PowerArmorItem ? Suit.POWER : Suit.HAZMAT;
-    }
-
-    /** The power armour is a powered exoskeleton, the hazmat suit is rubber - same clip, very different weight. */
-    private enum Suit {
-        POWER(0.9F),
-        HAZMAT(0.45F);
-
-        private final float volume;
-
-        Suit(float volume) {
-            this.volume = volume;
-        }
+        return true;
     }
 }

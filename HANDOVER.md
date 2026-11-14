@@ -94,14 +94,12 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 - 物品：`power_helmet/chest/legs/boots`，创造模式页签里，**暂无配方**（外观优先）。
 - 验收：`PowerArmorModelTest` 解析四个 OBJ，断言物件名、材质不透明、贴图字节内嵌、顶点仍在 biped 空间；离线外观预览 `F:\DSH\work\preview_power_armor.py` → `build/reports/power-armor-preview.png`。
 
-### 踩踏音效
+### 踩踏音效（照 HBM 的 `ArmorFSB#steppy`）
 
-- 素材：NTM 的 `assets/hbm/sounds/footsteps/powered{1,2,3}.ogg`（HBM `sounds.json` 里 `step.powered`，category `player`），复制为 `assets/gfbs_doors/sounds/armor/step_power{1,2,3}.ogg`，`sounds.json` 键 `armor.step_power`，`ModSounds.ARMOR_STEP_POWER` 注册。
-- ⚠️ `sounds.json` 里的音效名**必须写命名空间**（`gfbs_doors:armor/step_power1`）。写裸路径 `armor/step_power1` 会被当成 `minecraft:` 命名空间，加载时报 `File minecraft:sounds/... does not exist`，事件变成空 → 播放时报 `Unable to play empty soundEvent`，一次都听不到。门的音效条目本来就是带命名空间的，所以没踩过这个坑。
-- ⚠️ 触发位移**不能用 `player.xo`**：1.20.1 里 `xo` 只在传送（`absMoveTo`/`moveTo`）时赋值，每 tick 取 `getX() - xo` 几乎恒为 0。要用 `Entity#move` 里真正累加的 `walkDist`（每走 1 格 +0.6）。
-- 触发：`ArmorFootsteps`（`TickEvent.PlayerTickEvent` END）。**不用原版 `playStepSound`**——那样会按脚下方块出草地/石子声；这里自己累计水平位移，每走 1.55 格响一次（和原版步幅节奏接近），音量：动力甲 0.9 / 潜行服 0.45（同一套音效，重量不同），音调 ±6% 随机。
-- 条件：**整套判定**——四个槽位都是本模组护甲才响（与 `HazmatBodyReplacement` 的全隐藏判定一致），音量按靴子取（踩地的是它）；仅本地玩家、`onGround`，且不在水中/岩浆/梯子/载具/飞行/潜行/旁观。
-- 已知限制：其他玩家的踩踏仍是原版脚步（服务端发的），因为本线还没有服务端行为。
+- NTM 里 **T-51b 用的是 `.setStep("hbm:step.metal")`** → `assets/hbm/sounds/footsteps/metal.ogg`（单文件）；`powered1..3` 是**别的**动力甲的，别用错。复制为 `assets/gfbs_doors/sounds/armor/step_metal.ogg`，`sounds.json` 键 `armor.step_metal`（音效名**必须带命名空间** `gfbs_doors:`，否则按 `minecraft:` 找文件，事件变空）。
+- 播放参数照抄：`playSound(sound, 0.25F, 1.0F)`——**音量 0.25、音调固定 1.0、不做随机**。节奏用原版自己的计数器（1.7.10 的 `distanceWalkedOnStepModified` = 现在的 `moveDist`，每走 1 格 +0.6），每 1.0 个单位一步；触发前还要求脚下方块非空气（HBM 的判定）。
+- 条件：**整套 T-51b**（HBM 的 hazmat 没有自定义踩踏声，所以防护服不响）、`onGround`、不在水/岩浆/梯子/载具/飞行/旁观。
+- ⚠️ 三个旧错误：用错音源（powered）、音量 0.9 且音调抖动、用 `walkDist` 而不是原版步幅计数 `moveDist`。另记：`Entity#xo` 只在传送时赋值，不能用来算每 tick 位移。
 
 ## 门调节器（新 UI）
 

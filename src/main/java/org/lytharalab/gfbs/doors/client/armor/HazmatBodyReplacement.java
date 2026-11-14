@@ -81,7 +81,7 @@ public final class HazmatBodyReplacement {
         if (helmet && chestplate && leggings && boots) {
             // Full set: the player goes away, except the head under a glass visor - the hazmat suit is
             // designed to show its face through the pane, while a closed helmet shows nothing anyway.
-            model.head.visible = !glassVisor;
+            model.head.visible = glassVisor;
             model.hat.visible = false;
             model.body.visible = false;
             model.rightArm.visible = false;
@@ -97,7 +97,7 @@ public final class HazmatBodyReplacement {
             // Partial wear: only hide what the worn pieces really cover, otherwise the player would be
             // left with invisible limbs between two visible ones.
             if (helmet) {
-                model.head.visible = !glassVisor;
+                model.head.visible = glassVisor;
                 model.hat.visible = false;
             }
             if (chestplate) {
