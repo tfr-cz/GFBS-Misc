@@ -12,3 +12,4 @@ logs/
 .project
 libs/gfbs_gltf-*.jar
 .mcdev/
+.scratch/
