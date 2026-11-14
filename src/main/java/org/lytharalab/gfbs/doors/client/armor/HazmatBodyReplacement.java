@@ -26,8 +26,10 @@ import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
  *   <li>helmet hides {@code head} - the hood covers it whole, and the visor is opaque anyway</li>
  *   <li>chestplate hides {@code body} and both arms - the sleeves reach past the wrist into the gloves
  *       and the torso runs from the collar to below the belt</li>
- *   <li>leggings hide both legs - the thigh shells meet the boot cuffs</li>
- *   <li>boots hide nothing extra: a bare-foot slot would leave a leg with no thigh above the boot</li>
+ *   <li>leggings hide both legs, but only together with the boots: the leggings stop below the knee
+ *       and the boots cover the shins, so hiding the legs on their own would leave the player with
+ *       floating thighs. Without the boots the vanilla legs stay and the leggings ride on them</li>
+ *   <li>boots alone hide nothing: hiding the legs would leave the boots with no thigh above them</li>
  * </ul>
  *
  * <p>The outer skin layer is hidden along with the parts it belongs to. 3D Skin Layers needs no
@@ -66,7 +68,9 @@ public final class HazmatBodyReplacement {
             model.leftSleeve.visible = false;
             model.rightSleeve.visible = false;
         }
-        if (wears(player, EquipmentSlot.LEGS)) {
+        // The leggings end below the knee; only the boots complete the leg, so the vanilla legs are
+        // kept (and the leggings ride over them) until both pieces are on.
+        if (wears(player, EquipmentSlot.LEGS) && wears(player, EquipmentSlot.FEET)) {
             model.rightLeg.visible = false;
             model.leftLeg.visible = false;
             model.leftPants.visible = false;
