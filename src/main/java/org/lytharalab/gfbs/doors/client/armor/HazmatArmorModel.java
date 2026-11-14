@@ -25,13 +25,17 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * canisters, valves) rides on top. Small parts are 0.3-1.5 units, so they read as trim from a
  * distance and as machinery up close.</p>
  *
- * <p>Textures are 256x256 with eight flat 64x64 cells, one per material:</p>
+ * <p>Textures are 256x256 with eight 64x64 cells, one per material. The cells are painted worn
+ * patches (grime, stains, scuffs, rust) rather than flat colours:</p>
  * <pre>
  *   primary  (0,0)    shadow  (64,0)   trim   (128,0)   dark   (192,0)
  *   accent   (0,64)   glass   (64,64)  metal  (128,64)  lamp   (192,64)
  * </pre>
- * <p>A box samples the whole cell from its origin, so the widest unwrap here (the torso,
- * 2*(10.8+6.0) x 14.2+6.0 = 34 x 20) still sits inside one 64x64 cell.</p>
+ * <p>A box samples the cell from its origin and each of its six faces lands on a different part of
+ * the unwrap rect, so painted noise gives every face its own dirt without any per-face UV work. What
+ * must not go into a cell is positional art - seams, logos, edge wear - because it would land on
+ * faces at unpredictable offsets. The widest unwrap here (the collar, 2*(11.96+11.96) = 47.8 x 19.1)
+ * still sits inside one 64x64 cell.</p>
  */
 @OnlyIn(Dist.CLIENT)
 public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {

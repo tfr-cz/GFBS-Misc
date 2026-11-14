@@ -64,7 +64,7 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 - 模型只声明**七个标准部件名**（head/hat/body/right_arm/left_arm/right_leg/left_leg），未用到的留空；槽位填哪些盒子见 `HazmatArmorModel`。
 - 细节靠**叠壳**而不是一个大盒子：底壳定轮廓 → 略凸出的加强筋/包边 → 五金件（带扣、铆钉、滤毒罐、气瓶阀门）压在最外面，小件 0.3–1.5 单位。当前共 115 个盒子（头 33 / 胸 42 / 腿 20 / 靴 20）。
 - 模型实例按槽位缓存（`HazmatArmorModels`），共享给所有玩家——因为每次渲染 Forge 都会把玩家姿势+可见性重新拷进来。
-- 贴图坐标（256×256，八色区）：`(0,0)=primary`、`(64,0)=shadow`、`(128,0)=trim`、`(192,0)=dark`、`(0,64)=accent`、`(64,64)=glass`、`(128,64)=metal`、`(192,64)=lamp`；盒子 UV 展开尺寸（`2*(w+d) × (h+d)`）必须落在 64×64 色区内，目前最大 47.8×19.1（领圈 / 胸壳）。色区是纯色的：盒子从 texOffs 起整块采样，色区里画图案只会按随机偏移落在某个面上，所以细节来自几何和材质数量，不靠贴图绘制。
+- 贴图坐标（256×256，八色区）：`(0,0)=primary`、`(64,0)=shadow`、`(128,0)=trim`、`(192,0)=dark`、`(0,64)=accent`、`(64,64)=glass`、`(128,64)=metal`、`(192,64)=lamp`；盒子 UV 展开尺寸（`2*(w+d) × (h+d)`）必须落在 64×64 色区内，目前最大 47.8×19.1（领圈 / 胸壳）。色区现在画成**旧化贴片**（叠层 value noise 做污渍、漂白、流痕、划痕，金属加锈），由 `F:\DSH\work\gen_hazmat_textures.py` 按固定种子生成；盒子从 texOffs 起采样、六个面落在 unwrap 不同子区，所以噪点会自然变成“每个面脏得不一样”。**不能**放进色区的是位置性图案（接缝、logo、边缘磨损）——它们会按不可预测的偏移落到某个面上。
 - 预览：`build/reports/hazmat-preview.png`（由 `F:\DSH\work\preview_hazmat.py` 直接解析模型源码生成的正交示意图，只用于比例自查，不是实机渲染）。
 - 尺寸：整体比早期版本收过一圈（`F:\DSH\work\shrink_hazmat.py` 按部位、按锚点缩放：头/胸 XZ 0.92、Y 0.96；袖臂 XZ 0.90；裤/靴 XZ 0.94；靴子 Y 不动，否则鞋底会离地）。
 - 隐去皮肤外层（`HazmatSkinLayers`）：头盔→`hat`，胸甲→`jacket`+`leftSleeve`/`rightSleeve`，护腿→`leftPants`/`rightPants` 置 `visible=false`。**只置 false、从不置回 true**（skinlayers3d 自己也会把这些部件隐藏掉换成 3D 几何，我们重新置 true 会叠一层平面外层；恢复靠每帧 `setModelProperties` 自己重设）。**基础部件 head/body/arm/leg 一律不碰**（脸上要透过视窗看见，而且 Forge `copyModelProperties` 会把玩家模型部件可见性拷到护甲模型上，隐藏基础部件会把套装自己一起隐藏）。
