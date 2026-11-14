@@ -3,7 +3,6 @@ package org.lytharalab.gfbs.misc;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.lytharalab.gfbs.doors.content.ModBlockEntities;
@@ -28,26 +27,6 @@ public final class GFBSMisc {
         ModItems.register(bus);
         ModCreativeTabs.register(bus);
         bus.addListener(this::commonSetup);
-        registerClassicBarIfPresent();
-    }
-
-    /**
-     * Classic Bar caches its bar list while loading its config, which is earlier than client setup, so the bar
-     * has to be registered here in the constructor. The guard keeps its classes off machines without it.
-     */
-    private static void registerClassicBarIfPresent() {
-        if (!FMLEnvironment.dist.isClient()) {
-            return;
-        }
-        if (!org.lytharalab.gfbs.doors.client.armor.compat.ClassicBarPresence.PRESENT) {
-            return;
-        }
-        try {
-            org.lytharalab.gfbs.doors.client.armor.compat.ClassicBarPowerBars.register();
-        } catch (Throwable broken) {
-            // A Classic Bar API change must not take the whole mod down; the vanilla-layout HUD stays unused.
-            LOGGER.warn("Classic Bar present but its bar API rejected the charge bars", broken);
-        }
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {

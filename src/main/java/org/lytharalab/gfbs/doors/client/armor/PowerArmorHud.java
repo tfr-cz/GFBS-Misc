@@ -1,89 +1,79 @@
 package org.lytharalab.gfbs.doors.client.armor;
 
-import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import org.lytharalab.gfbs.doors.client.armor.compat.ClassicBarPresence;
+import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import org.lytharalab.gfbs.doors.content.armor.PowerArmorCharge;
 
-import java.util.List;
-
 /**
- * The green charge bars above the armour row, ported from HBM's
- * {@code ModEventHandlerClient#getBars / onHUDRenderBar}.
+ * The charge rows above the hotbar: HBM's {@code onHUDRenderBar}, rebuilt on top of Forge's overlay stack.
  *
- * <p>NTM draws one bar <em>per worn powered piece</em> - not one bar for the set - into the rows right
- * above the armour bar, then bumps {@code GuiIngameForge.left_height} so the vanilla HUD moves up instead of
- * being covered. 1.20.1 has no {@code left_height}, so the bars are drawn from the armour row's own
- * y-coordinate upwards; that keeps them clear of the armour bar without touching vanilla layout.</p>
+ * <p>NTM painted these in {@code RenderGameOverlayEvent.Post(ARMOR)} and reserved space by bumping
+ * {@code GuiIngameForge.left_height}. Forge's {@link ForgeGui} keeps the same field, so this renders as its own
+ * overlay - registered <em>after</em> everything else and anchored to {@code leftHeight} - which is both the
+ * closest thing to HBM's behaviour and the reason nothing can paint over the rows: they are last.</p>
  *
- * <p>Only the shape is ported: an 81px track at {@code width / 2 - 91}, 3px tall in dark grey, with a 1px
- * fill inset by one pixel. No text, no blinking, no sound - HBM has none of those either.</p>
+ * <p>An earlier version registered a bar inside Classic Bar's own render loop instead. That drew the rows but
+ * flickered, because the two renderers fight over the same rows within one frame. Drawing outside that loop and
+ * last removes the race; Classic Bar stays the owner of the bars below, and this simply stacks on top of
+ * whatever {@code leftHeight} ended at.</p>
  *
- * <p>One deliberate difference: NTM hard-codes the fill to green ({@code 65280} in its bytecode). The fill
- * here ramps green -> yellow -> red with the charge, which is the colour the durability bar it replaced has
- * always used - so a nearly flat suit reads red at a glance instead of looking healthy.</p>
+ * <p>No text, no blinking, no sound - HBM has none of those. One deliberate difference: NTM hard-codes the fill
+ * to green ({@code 65280}), while this ramps green to red with the charge, which is the colour the durability
+ * bar it replaced has always used.</p>
  */
 @OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(
-    modid = "gfbs_misc",
-    value = {Dist.CLIENT}
-)
-public final class PowerArmorHud {
+public final class PowerArmorHud implements IGuiOverlay {
     public static final int SEGMENT_WIDTH = 81;
+    public static final int ROW_STEP = 4;
+    public static final int HOTBAR_LEFT_OFFSET = 91;
     private static final int INSET = 1;
     private static final int TRACK_HEIGHT = 3;
-    public static final int ROW_STEP = 4;
     private static final int TRACK_COLOR = 0xFF404040;
-    /** Vanilla's armour row starts this far above the bottom edge. */
-    private static final int ARMOR_ROW_FROM_BOTTOM = 49;
-    /** Same left edge the hotbar and the armour row use. */
-    public static final int HOTBAR_LEFT_OFFSET = 91;
+    /** The four rows need this much vertical room; reserved from {@code leftHeight} for anything after us. */
+    private static final int RESERVED_HEIGHT = ROW_STEP * 4;
 
-    private PowerArmorHud() {
-    }
+    private static final boolean DEBUG = Boolean.getBoolean("gfbs.debug.hud");
+    private static long lastLogTick = Long.MIN_VALUE;
 
-    @SubscribeEvent
-    public static void onRenderOverlay(RenderGuiOverlayEvent.Post event) {
-        if (!VanillaGuiOverlay.ARMOR_LEVEL.id().equals(event.getOverlay().id())) {
+    @Override
+    public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int screenWidth, int screenHeight) {
+        Player player = gui.getMinecraft().player;
+        if (player == null || gui.getMinecraft().options.hideGui) {
             return;
         }
-        if (ClassicBarPresence.PRESENT) {
-            // Classic Bar disables the vanilla armour overlay and draws the bars itself, above its own rows.
-            return;
-        }
-        Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null || minecraft.options.hideGui) {
-            return;
-        }
-        // Inventory#armor is in feet-to-head order, the order the bars stack in.
-        List<ItemStack> armor = minecraft.player.getInventory().armor;
+        java.util.List<ItemStack> armor = player.getInventory().armor;
         if (!PowerArmorCharge.hasFullSet(armor)) {
             return;
         }
 
-        int width = event.getWindow().getGuiScaledWidth();
-        int height = event.getWindow().getGuiScaledHeight();
-        int left = width / 2 - HOTBAR_LEFT_OFFSET;
-        int armorRow = height - ARMOR_ROW_FROM_BOTTOM;
-        GuiGraphics graphics = event.getGuiGraphics();
+        // Drawn last, but Classic Bar's colours or another overlay's tint may still be in the shader colour.
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
 
+        int left = screenWidth / 2 - HOTBAR_LEFT_OFFSET;
+        int baseline = screenHeight - gui.leftHeight;
         for (int index = 0; index < armor.size(); index++) {
             ItemStack piece = armor.get(index);
             if (!PowerArmorCharge.isPowerArmor(piece)) {
                 continue;
             }
-            drawRow(graphics, left, armorRow - ROW_STEP * (index + 1), chargeRatio(piece));
+            drawRow(graphics, left, baseline - ROW_STEP * (index + 1), chargeRatio(piece));
+        }
+        gui.leftHeight += RESERVED_HEIGHT;
+
+        if (DEBUG) {
+            logOnceASecond(player, armor, gui.leftHeight);
         }
     }
 
-    /** One track plus its 1px fill; shared with the Classic Bar adapter so both paths look identical. */
+    /** One track plus its 1px fill. */
     public static void drawRow(GuiGraphics graphics, int left, int top, float progress) {
         graphics.fill(left, top, left + SEGMENT_WIDTH, top + TRACK_HEIGHT, TRACK_COLOR);
         int fillEnd = fillEnd(left, progress);
@@ -105,5 +95,18 @@ public final class PowerArmorHud {
     static int fillEnd(int left, float progress) {
         float clamped = Math.max(0.0F, Math.min(1.0F, progress));
         return left + INSET + Math.round((SEGMENT_WIDTH - INSET * 2) * clamped);
+    }
+
+    private static void logOnceASecond(Player player, java.util.List<ItemStack> armor, int leftHeight) {
+        long now = player.level().getGameTime();
+        if (lastLogTick != Long.MIN_VALUE && now - lastLogTick < 20L) {
+            return;
+        }
+        lastLogTick = now;
+        StringBuilder builder = new StringBuilder("power hud: leftHeight=").append(leftHeight).append(" charges=");
+        for (ItemStack piece : armor) {
+            builder.append(PowerArmorCharge.isPowerArmor(piece) ? PowerArmorCharge.get(piece) : -1L).append(' ');
+        }
+        org.slf4j.LoggerFactory.getLogger("gfbs_doors").info(builder.toString());
     }
 }

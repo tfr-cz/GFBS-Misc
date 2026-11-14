@@ -38,14 +38,6 @@ ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
-modId = "classicbar"
-mandatory = false
-# 可选：装了 Classic Bar 就把电量条注册成它的一条条，否则用原版护甲条位置。
-versionRange = "[1,)"
-ordering = "AFTER"
-side = "CLIENT"
-
-[[dependencies.${mod_id}]]
 modId = "gfbs_auralis"
 mandatory = false
 # 可选：装了就把门循环音交给 Auralis 做空间音频，没装则回退原版 SoundManager（反射探测，不硬依赖）。

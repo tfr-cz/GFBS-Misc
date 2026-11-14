@@ -83,8 +83,6 @@ dependencies {
     implementation fg.deobf("org.lytharalab.gfbs:gfbs_gltf:1.5.1")
     // Compile-only slice of GFBS : Main's public command API; GFBS : Main itself stays optional.
     compileOnly files('libs/gfbs_main_api_stub.jar')
-    // Classic Bar's bar API, compiled against but never shipped: only loaded when the mod is installed.
-    compileOnly files('libs/classicbar-1.20.1-6.jar')
     testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
 }
 
