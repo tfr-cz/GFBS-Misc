@@ -43,6 +43,13 @@ import org.lytharalab.gfbs.gltf.api.client.GltfRenderer;
 )
 public final class HazmatFirstPersonArm {
     private static final float MODEL_SCALE = 1.0F / 16.0F;
+    /** Column-major identity: the arm is drawn in its rest pose (see the note on the method). */
+    private static final float[] IDENTITY = {
+        1.0F, 0.0F, 0.0F, 0.0F,
+        0.0F, 1.0F, 0.0F, 0.0F,
+        0.0F, 0.0F, 1.0F, 0.0F,
+        0.0F, 0.0F, 0.0F, 1.0F
+    };
 
     private static final ResourceLocation CHEST_TEXTURE =
         new ResourceLocation("gfbs_doors", "textures/armor/hazmat_chest.png");
@@ -86,6 +93,11 @@ public final class HazmatFirstPersonArm {
      * on the arm's pivot with the arm rotation zeroed - so the geometry has to be shifted by minus that
      * pivot, then scaled to blocks. Only the arm's own nodes are drawn; visibility is restored right
      * after, because the same instance is used for the third-person pass.</p>
+     *
+     * <p>The node matrices are reset to identity here. Whatever the third-person pass wrote last is the
+     * player's <em>current</em> pose, so switching to first person mid-stride used to draw the arm with
+     * the swing it had while walking, inside a pose stack that already assumes a resting arm - the arm
+     * landed in the wrong place. First person is drawn at rest, so the nodes have to be at rest too.</p>
      */
     private static void renderPowerArmorArm(RenderArmEvent event) {
         PowerArmorModels.Suit suit = PowerArmorModels.get(EquipmentSlot.CHEST);
@@ -99,7 +111,11 @@ public final class HazmatFirstPersonArm {
         float pivotX = event.getArm() == HumanoidArm.RIGHT ? -5.0F : 5.0F;
 
         for (PowerArmorModels.Binding binding : suit.bindings()) {
-            suit.instance().setNodeVisible(binding.node(), binding.part() == wanted);
+            boolean arm = binding.part() == wanted;
+            suit.instance().setNodeVisible(binding.node(), arm);
+            if (arm) {
+                suit.instance().nodes().node(binding.node()).localMatrix(IDENTITY);
+            }
         }
 
         PoseStack pose = event.getPoseStack();
