@@ -22,7 +22,7 @@ import java.util.function.Consumer;
  */
 public final class PowerArmorItem extends ArmorItem {
     public PowerArmorItem(ArmorItem.Type type, Properties properties) {
-        super(HazmatArmorMaterial.INSTANCE, type, properties);
+        super(PowerArmorMaterial.INSTANCE, type, properties);
     }
 
     /**
@@ -33,6 +33,21 @@ public final class PowerArmorItem extends ArmorItem {
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, @Nullable String type) {
         return "gfbs_doors:textures/armor/hazmat_chest.png";
+    }
+
+    /**
+     * HBM's {@code hasFSBArmor}: every armour slot holding this suit. Shared by the set bonus, the
+     * impact behaviour and the footstep trigger so they can never disagree about what "wearing it" means.
+     */
+    public static boolean isCompleteSet(LivingEntity entity) {
+        for (EquipmentSlot slot : new EquipmentSlot[]{
+            EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
+            ItemStack stack = entity.getItemBySlot(slot);
+            if (stack.isEmpty() || !(stack.getItem() instanceof PowerArmorItem)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

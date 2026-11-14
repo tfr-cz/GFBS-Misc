@@ -38,6 +38,9 @@ public final class ModSounds {
     public static final RegistryObject REACTOR_DOOR_CLOSE = add("door.reactor_door_close");
     /** HBM's T-51b footstep clip (footsteps/metal.ogg in NTM, registered there as step.metal). */
     public static final RegistryObject<SoundEvent> ARMOR_STEP_METAL = add("armor.step_metal");
+    /** HBM's T-51b jump / landing clips (step.iron_jump, step.iron_land in NTM). */
+    public static final RegistryObject<SoundEvent> ARMOR_STEP_JUMP = add("armor.step_jump");
+    public static final RegistryObject<SoundEvent> ARMOR_STEP_LAND = add("armor.step_land");
 
     private ModSounds() {
     }

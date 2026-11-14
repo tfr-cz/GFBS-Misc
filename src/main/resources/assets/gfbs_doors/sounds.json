@@ -225,5 +225,23 @@
         "attenuation_distance": 16
       }
     ]
+  },
+  "armor.step_jump": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "gfbs_doors:armor/step_iron_jump",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "armor.step_land": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "gfbs_doors:armor/step_iron_land",
+        "attenuation_distance": 16
+      }
+    ]
   }
 }

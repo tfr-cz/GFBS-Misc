@@ -96,5 +96,6 @@
   "item.gfbs_doors.power_helmet": "T-51b动力装甲 头盔",
   "item.gfbs_doors.power_chest": "T-51b动力装甲 胸甲",
   "item.gfbs_doors.power_legs": "T-51b动力装甲 护腿",
-  "item.gfbs_doors.power_boots": "T-51b动力装甲 靴子"
+  "item.gfbs_doors.power_boots": "T-51b动力装甲 靴子",
+  "death.attack.power_armor_impact": "被动力装甲的落地冲击碾碎了"
 }

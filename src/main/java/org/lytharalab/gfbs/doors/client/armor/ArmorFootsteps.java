@@ -68,7 +68,7 @@ public final class ArmorFootsteps {
         float moved = player.moveDist;
         Float previous = LAST_MOVE.put(player, moved);
 
-        if (!wearsCompleteSet(player) || !canStep(player)) {
+        if (!PowerArmorItem.isCompleteSet(player) || !canStep(player)) {
             PENDING.put(player, 0.0F);
             return;
         }
@@ -105,14 +105,4 @@ public final class ArmorFootsteps {
             && !player.getBlockStateOn().isAir();
     }
 
-    private static boolean wearsCompleteSet(Player player) {
-        for (EquipmentSlot slot : new EquipmentSlot[]{
-            EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
-            ItemStack stack = player.getItemBySlot(slot);
-            if (stack.isEmpty() || !(stack.getItem() instanceof PowerArmorItem)) {
-                return false;
-            }
-        }
-        return true;
-    }
 }

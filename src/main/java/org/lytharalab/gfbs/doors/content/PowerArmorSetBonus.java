@@ -47,7 +47,7 @@ public final class PowerArmorSetBonus {
             return;
         }
         Player player = event.player;
-        if (player.level().isClientSide() || !wearsCompleteSet(player)) {
+        if (player.level().isClientSide() || !PowerArmorItem.isCompleteSet(player)) {
             return;
         }
 

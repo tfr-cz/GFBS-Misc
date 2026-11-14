@@ -91,6 +91,10 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 - 第一人称：`HazmatFirstPersonArm` 里对动力甲走同一条路——只显示该手臂的节点，`scale(1/16)` 后按 `-pivot` 平移再画（第一人称的 pose 已经在手臂轴上、手臂旋转被归零）。
 - **套装效果（照 HBM 抄的机制）**：NTM 里 `ArmorFSB.handleTick` 每 tick 把**胸甲**上登记的 `effects` 全部重新施加一遍，条件是 `hasFSBArmor`（四个槽位同材质全套，且 `isArmorEnabled` 有电）。T-51b 在 `ModItemsArmor` 里只登记了一条：`new PotionEffect(Potion.<id>, 20, 0)` —— 1 秒、等级 I、每 tick 刷新，所以脱下 1 秒内自动消失。
 - 本模组对应实现：`PowerArmorSetBonus`（服务端 tick；效果是服务端权威的），四件都是 `PowerArmorItem` 时施加 `MOVEMENT_SPEED` 等级 I、20 tick、ambient、无粒子，剩余时间低于 10 tick 才补，且不会顶掉更强的同类效果。**两处已知差异**：①没有能量系统，所以没有 `isArmorEnabled` 的电量门槛；②HBM 那条效果的混淆字段（`Potion.field_76420_g`）离线无法解析成具体药水名，按“加速”的意图映射为移动速度，若实际应为急迫（挖掘加速）改一行即可。
+- **护甲值/耐久（照抄 `HBM_T51`）**：`PowerArmorMaterial` —— 防御 3/8/6/3、耐久 150×{11,16,15,13} = 1650/2400/2250/1950、附魔值 0、韧性与击退抗性 0（1.7.10 没有这两项）。
+- **起跳/落地音**（`PowerArmorImpact`）：`LivingJumpEvent` → `step.iron_jump`、`LivingFallEvent`（>0.5 格）→ `step.iron_land`，都是 **0.5 音量 / 1.0 音调**，服务端 `level.playSound` 广播，且要求整套。
+- **硬着陆冲击波**：同一事件里 `fallDistance > 10` 时，半径 3 格内所有非掉落物实体：`intensity = 3 - 水平距离`，`push(offset*intensity*-2, 0.1*intensity, ...)`，伤害 `(int)(intensity*10)`（HBM 的偏移向量不归一化，越靠边推得越远，照抄）。伤害用专属伤害类型 `gfbs_doors:power_armor_impact` 并登记进 `minecraft:tags/damage_type/bypasses_armor`，对应 HBM 的 `setDamageBypassesArmor`。
+- **头盔 HUD 接口（留给后续移植其他护甲）**：`client/armor/hud/` —— `ArmorHudOverlay`（函数式接口，拿 `ArmorHudContext`：GuiGraphics/player/partialTick/宽高）、`ArmorHudOverlays.register(Item, ArmorHudOverlay)`（按**头盔槽**派发，挂 `RenderGuiOverlayEvent.Post`）、`TextureHudOverlay`（HBM `setOverlay(texture)` 的等价物：256×256 全屏拉伸）。T-51b 目前没有 overlay，先留空。
 - 物品：`power_helmet/chest/legs/boots`，创造模式页签里，**暂无配方**（外观优先）。
 - 验收：`PowerArmorModelTest` 解析四个 OBJ，断言物件名、材质不透明、贴图字节内嵌、顶点仍在 biped 空间；离线外观预览 `F:\DSH\work\preview_power_armor.py` → `build/reports/power-armor-preview.png`。
 
