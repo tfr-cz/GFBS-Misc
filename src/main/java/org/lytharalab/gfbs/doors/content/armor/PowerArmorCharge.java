@@ -1,6 +1,7 @@
 package org.lytharalab.gfbs.doors.content.armor;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -164,6 +165,20 @@ public final class PowerArmorCharge {
             return 0L;
         }
         return Math.min(value, MAX_CHARGE);
+    }
+
+    /**
+     * The bar colour for a charge ratio: the vanilla durability-bar hue, so a full piece is green, half a
+     * piece is yellow and an empty one is red.
+     *
+     * <p>HBM never picked a colour for the bar it repurposed - it left {@code getDurabilityForDisplay} alone
+     * and let 1.7.10 draw the usual green-to-red ramp. 1.20.1 asks for the colour explicitly through
+     * {@code Item#getBarColor}, whose vanilla body is the same {@code hsvToRgb(ratio / 3, 1, 1)} formula
+     * used here.</p>
+     */
+    public static int barColor(float ratio) {
+        float clamped = Math.max(0.0F, Math.min(1.0F, ratio));
+        return Mth.hsvToRgb(clamped / 3.0F, 1.0F, 1.0F);
     }
 
     /**

@@ -27,6 +27,13 @@ class PowerArmorHudTest {
     }
 
     @Test
+    void theFillColourFollowsTheCharge() {
+        assertEquals(0x00FF00, PowerArmorHud.fillColor(1.0F));
+        assertEquals(0xFFFF00, PowerArmorHud.fillColor(0.5F));
+        assertEquals(0xFF0000, PowerArmorHud.fillColor(0.0F));
+    }
+
+    @Test
     void outOfRangeRatiosClampToTheTrack() {
         assertEquals(LEFT + 1, PowerArmorHud.fillEnd(LEFT, -2.0F));
         assertEquals(LEFT + 80, PowerArmorHud.fillEnd(LEFT, 4.0F));

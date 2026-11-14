@@ -23,7 +23,11 @@ import java.util.List;
  * y-coordinate upwards; that keeps them clear of the armour bar without touching vanilla layout.</p>
  *
  * <p>Only the shape is ported: an 81px track at {@code width / 2 - 91}, 3px tall in dark grey, with a 1px
- * bright green fill inset by one pixel. No text, no blinking, no sound - HBM has none of those either.</p>
+ * fill inset by one pixel. No text, no blinking, no sound - HBM has none of those either.</p>
+ *
+ * <p>One deliberate difference: NTM hard-codes the fill to green ({@code 65280} in its bytecode). The fill
+ * here ramps green -> yellow -> red with the charge, which is the colour the durability bar it replaced has
+ * always used - so a nearly flat suit reads red at a glance instead of looking healthy.</p>
  */
 @OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(
@@ -36,7 +40,6 @@ public final class PowerArmorHud {
     private static final int TRACK_HEIGHT = 3;
     private static final int ROW_STEP = 4;
     private static final int TRACK_COLOR = 0xFF404040;
-    private static final int FILL_COLOR = 0xFF00FF00;
     /** Vanilla's armour row starts this far above the bottom edge. */
     private static final int ARMOR_ROW_FROM_BOTTOM = 49;
     /** Same left edge the hotbar and the armour row use. */
@@ -76,9 +79,14 @@ public final class PowerArmorHud {
             graphics.fill(left, top, left + SEGMENT_WIDTH, top + TRACK_HEIGHT, TRACK_COLOR);
             int fillEnd = fillEnd(left, progress);
             if (fillEnd > left + INSET) {
-                graphics.fill(left + INSET, top + INSET, fillEnd, top + INSET + 1, FILL_COLOR);
+                graphics.fill(left + INSET, top + INSET, fillEnd, top + INSET + 1, 0xFF000000 | fillColor(progress));
             }
         }
+    }
+
+    /** The fill colour for a charge ratio: the same green-to-red ramp the durability bar uses. */
+    static int fillColor(float progress) {
+        return PowerArmorCharge.barColor(progress);
     }
 
     /** Where the 1px fill line stops: the track inset by one pixel on both sides, times the charge ratio. */

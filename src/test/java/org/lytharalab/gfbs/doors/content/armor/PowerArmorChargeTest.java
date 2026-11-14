@@ -62,6 +62,16 @@ class PowerArmorChargeTest {
     }
 
     @Test
+    void theBarRampsGreenYellowRed() {
+        // Vanilla's durability-bar hue, applied to charge instead of damage.
+        assertEquals(0x00FF00, PowerArmorCharge.barColor(1.0F), "full is green");
+        assertEquals(0xFFFF00, PowerArmorCharge.barColor(0.5F), "half is yellow");
+        assertEquals(0xFF0000, PowerArmorCharge.barColor(0.0F), "empty is red");
+        assertEquals(0xFF0000, PowerArmorCharge.barColor(-1.0F), "clamped low");
+        assertEquals(0x00FF00, PowerArmorCharge.barColor(2.0F), "clamped high");
+    }
+
+    @Test
     void anItemStackRoundTripsThroughNbt() {
         assumeTrue(TestBootstrap.itemsAvailable(), "Forge bootstrap unavailable in this JVM");
         ItemStack stack = new ItemStack(new PowerArmorItem(ArmorItem.Type.HELMET, new net.minecraft.world.item.Item.Properties()));

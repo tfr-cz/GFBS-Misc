@@ -94,7 +94,7 @@ public final class PowerArmorItem extends ArmorItem {
 
     @Override
     public int getBarColor(ItemStack stack) {
-        return 0x00FF00;
+        return PowerArmorCharge.barColor((float) PowerArmorCharge.get(stack) / (float) PowerArmorCharge.MAX_CHARGE);
     }
 
     /**
