@@ -28,6 +28,10 @@ public final class ModCreativeTabs {
                     output.accept((ItemLike)ModItems.HAZMAT_CHEST.get());
                     output.accept((ItemLike)ModItems.HAZMAT_LEGS.get());
                     output.accept((ItemLike)ModItems.HAZMAT_BOOTS.get());
+                    output.accept((ItemLike)ModItems.POWER_HELMET.get());
+                    output.accept((ItemLike)ModItems.POWER_CHEST.get());
+                    output.accept((ItemLike)ModItems.POWER_LEGS.get());
+                    output.accept((ItemLike)ModItems.POWER_BOOTS.get());
                 })
                 .build()
     );

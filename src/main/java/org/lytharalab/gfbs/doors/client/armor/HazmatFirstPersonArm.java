@@ -18,6 +18,8 @@ import net.minecraftforge.client.event.RenderArmEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
+import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
+import org.lytharalab.gfbs.gltf.api.client.GltfRenderer;
 
 /**
  * Draws the suit's arm in first person instead of the player's skin arm.
@@ -40,6 +42,8 @@ import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
     value = {Dist.CLIENT}
 )
 public final class HazmatFirstPersonArm {
+    private static final float MODEL_SCALE = 1.0F / 16.0F;
+
     private static final ResourceLocation CHEST_TEXTURE =
         new ResourceLocation("gfbs_doors", "textures/armor/hazmat_chest.png");
 
@@ -50,7 +54,14 @@ public final class HazmatFirstPersonArm {
     public static void onRenderArm(RenderArmEvent event) {
         AbstractClientPlayer player = event.getPlayer();
         ItemStack chest = player.getItemBySlot(EquipmentSlot.CHEST);
-        if (chest.isEmpty() || !(chest.getItem() instanceof HazmatArmorItem)) {
+        if (chest.isEmpty()) {
+            return;
+        }
+        if (chest.getItem() instanceof PowerArmorItem) {
+            renderPowerArmorArm(event);
+            return;
+        }
+        if (!(chest.getItem() instanceof HazmatArmorItem)) {
             return;
         }
 
@@ -65,6 +76,43 @@ public final class HazmatFirstPersonArm {
         PoseStack pose = event.getPoseStack();
         VertexConsumer buffer = event.getMultiBufferSource().getBuffer(RenderType.entitySolid(CHEST_TEXTURE));
         arm.render(pose, buffer, event.getPackedLight(), OverlayTexture.NO_OVERLAY);
+        event.setCanceled(true);
+    }
+
+    /**
+     * HBM's arm, drawn where the vanilla arm would be.
+     *
+     * <p>The imported mesh is in absolute biped pixels, while the first-person pose stack already sits
+     * on the arm's pivot with the arm rotation zeroed - so the geometry has to be shifted by minus that
+     * pivot, then scaled to blocks. Only the arm's own nodes are drawn; visibility is restored right
+     * after, because the same instance is used for the third-person pass.</p>
+     */
+    private static void renderPowerArmorArm(RenderArmEvent event) {
+        PowerArmorModels.Suit suit = PowerArmorModels.get(EquipmentSlot.CHEST);
+        if (suit == null) {
+            return;
+        }
+        PowerArmorModels.Part wanted = event.getArm() == HumanoidArm.RIGHT
+            ? PowerArmorModels.Part.RIGHT_ARM
+            : PowerArmorModels.Part.LEFT_ARM;
+        // Biped arm pivots: right (-5, 2, 0), left (5, 2, 0).
+        float pivotX = event.getArm() == HumanoidArm.RIGHT ? -5.0F : 5.0F;
+
+        for (PowerArmorModels.Binding binding : suit.bindings()) {
+            suit.instance().setNodeVisible(binding.node(), binding.part() == wanted);
+        }
+
+        PoseStack pose = event.getPoseStack();
+        pose.pushPose();
+        pose.scale(MODEL_SCALE, MODEL_SCALE, MODEL_SCALE);
+        pose.translate(-pivotX, -2.0F, 0.0F);
+        GltfRenderer.render(suit.instance(), pose, event.getMultiBufferSource(), event.getPackedLight(),
+            OverlayTexture.NO_OVERLAY);
+        pose.popPose();
+
+        for (PowerArmorModels.Binding binding : suit.bindings()) {
+            suit.instance().setNodeVisible(binding.node(), true);
+        }
         event.setCanceled(true);
     }
 }

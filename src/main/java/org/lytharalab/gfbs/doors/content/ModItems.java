@@ -12,6 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
+import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
 import org.lytharalab.gfbs.doors.content.block.DoorConfiguratorItem;
 import org.lytharalab.gfbs.doors.content.block.DoorItem;
 
@@ -25,6 +26,10 @@ public final class ModItems {
     public static final RegistryObject<Item> HAZMAT_CHEST;
     public static final RegistryObject<Item> HAZMAT_LEGS;
     public static final RegistryObject<Item> HAZMAT_BOOTS;
+    public static final RegistryObject<Item> POWER_HELMET;
+    public static final RegistryObject<Item> POWER_CHEST;
+    public static final RegistryObject<Item> POWER_LEGS;
+    public static final RegistryObject<Item> POWER_BOOTS;
 
     private ModItems() {
     }
@@ -51,5 +56,12 @@ public final class ModItems {
         HAZMAT_CHEST = ITEMS.register("hazmat_chest", () -> new HazmatArmorItem(ArmorItem.Type.CHESTPLATE, new Properties()));
         HAZMAT_LEGS = ITEMS.register("hazmat_legs", () -> new HazmatArmorItem(ArmorItem.Type.LEGGINGS, new Properties()));
         HAZMAT_BOOTS = ITEMS.register("hazmat_boots", () -> new HazmatArmorItem(ArmorItem.Type.BOOTS, new Properties()));
+
+        // HBM's T-51b power armour: same four-slot split, but rendered from an imported mesh
+        // (PowerArmorLayer) instead of boxes, so the vanilla armour model stays empty.
+        POWER_HELMET = ITEMS.register("power_helmet", () -> new PowerArmorItem(ArmorItem.Type.HELMET, new Properties()));
+        POWER_CHEST = ITEMS.register("power_chest", () -> new PowerArmorItem(ArmorItem.Type.CHESTPLATE, new Properties()));
+        POWER_LEGS = ITEMS.register("power_legs", () -> new PowerArmorItem(ArmorItem.Type.LEGGINGS, new Properties()));
+        POWER_BOOTS = ITEMS.register("power_boots", () -> new PowerArmorItem(ArmorItem.Type.BOOTS, new Properties()));
     }
 }

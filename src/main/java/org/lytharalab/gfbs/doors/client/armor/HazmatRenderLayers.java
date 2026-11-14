@@ -34,6 +34,7 @@ public final class HazmatRenderLayers {
             PlayerRenderer renderer = event.getPlayerSkin(skin);
             if (renderer != null) {
                 renderer.addLayer(new HazmatVisorLayer(renderer));
+                renderer.addLayer(new PowerArmorLayer(renderer));
             }
         }
     }

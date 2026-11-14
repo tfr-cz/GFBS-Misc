@@ -80,6 +80,16 @@ python tools\compat_check.py                    # 提交前的注册名/命名�
 - 副作用（都接受，因为本线不再考虑与其他东西共存）：皮肤双层、`skinlayers3d` 的 3D 皮肤自动关闭（它的网格以基础部件可见为前提）；披风/鞘翅仍会盖在套装外面（1.20.1 里 cape/ear 由各自的 layer 和模型部件渲染，不在 `PlayerModel` 上）；僵尸等非玩家生物穿这套仍会与本体互穿（本逻辑只挂在 `RenderPlayerEvent`）。
 - 第一人称（`HazmatFirstPersonArm`）：挂 `RenderArmEvent`，穿胸甲时取消原版并渲染我们自己的手臂子树（袖+手套+腕环+肩甲），姿态用 `setupAnim(player,0,0,0,0,0)` + 手臂姿态归零复刻原版第一人称；否则屏幕角落会露出一只裸手。
 
+## HBM T-51b 动力装甲（仅外观，无功能）
+
+- 资源来源：`G:\.minecraftersions.7.10-Forge_10.13.4.1614\mods\HBM-NTM-.1.0.27_X5778_H261.jar` 的 `assets/hbm/models/armor/t51.obj` 与 `assets/hbm/textures/armor/t51_{helmet,chest,arm,leg}.png`。导入脚本 `tools/import_hbm_power_armor.py`（可重跑）：把单个 OBJ 按物件名拆成四个槽位文件，原模型已经是 **vanilla biped 像素空间**（x -10.23..10.23、y -8.65..24.24、z -6.21..5.31），所以不需要改顶点。
+- 物件 → 槽位映射：`Helmet`→头盔；`Chest/LeftArm/RightArm`→胸甲（胸甲用 `t51_chest`、双臂用 `t51_arm`，两种材质同一 OBJ）；`LeftLeg/RightLeg`→护腿；`LeftBoot/RightBoot`→靴子。
+- 渲染：`PowerArmorLayer`（与视窗同一个渲染层列表，经 `EntityRenderersEvent.AddLayers` 挂上）。每个物件按 `T(pivot)·R·T(-pivot)` 写进节点 localMatrix——因为 OBJ 顶点是**绝对坐标**，而 `ModelPart.translateAndRotate` 期待的是 pivot 相对坐标；然后整体 `scale(1/16)` 画一次。双面渲染（HBM 导出的缠绕不一致）。
+- `PowerArmorItem` 让原版护甲层画一个空的 `HumanoidModel`（`EmptyArmorModel`），避免双层图像；本体隐藏仍由 `HazmatBodyReplacement` 负责（已泛化到两种护甲；动力甲的护腿包整条腿，所以单独穿也隐藏腿，而潜行服护腿要和靴子一起穿才隐藏）。
+- 第一人称：`HazmatFirstPersonArm` 里对动力甲走同一条路——只显示该手臂的节点，`scale(1/16)` 后按 `-pivot` 平移再画（第一人称的 pose 已经在手臂轴上、手臂旋转被归零）。
+- 物品：`power_helmet/chest/legs/boots`，创造模式页签里，**暂无配方**（外观优先）。
+- 验收：`PowerArmorModelTest` 解析四个 OBJ，断言物件名、材质不透明、贴图字节内嵌、顶点仍在 biped 空间；离线外观预览 `F:\DSH\work\preview_power_armor.py` → `build/reports/power-armor-preview.png`。
+
 ## 门调节器（新 UI）
 
 - 布局与分组：`DoorConfigScreen` 把内容分成「选项」和「GFBS 强制模式」两组（`gui.gfbs_doors.config.group.options` / `.group.forced`），

@@ -92,5 +92,9 @@
   "item.gfbs_doors.hazmat_helmet": "Hazmat Helmet",
   "item.gfbs_doors.hazmat_chest": "Hazmat Chestplate",
   "item.gfbs_doors.hazmat_legs": "Hazmat Leggings",
-  "item.gfbs_doors.hazmat_boots": "Hazmat Boots"
+  "item.gfbs_doors.hazmat_boots": "Hazmat Boots",
+  "item.gfbs_doors.power_helmet": "T-51b Power Armor Helmet",
+  "item.gfbs_doors.power_chest": "T-51b Power Armor Chestplate",
+  "item.gfbs_doors.power_legs": "T-51b Power Armor Leggings",
+  "item.gfbs_doors.power_boots": "T-51b Power Armor Boots"
 }

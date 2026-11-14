@@ -1,0 +1,15 @@
+newmtl power_chest
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/t51_chest.png
+
+newmtl power_arm
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 1.0
+illum 1
+map_Kd tex/t51_arm.png

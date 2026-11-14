@@ -10,6 +10,7 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
+import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
 
 import java.util.Collections;
 import java.util.Set;
@@ -67,7 +68,14 @@ public final class HazmatBodyReplacement {
         AbstractClientPlayer player = (AbstractClientPlayer) event.getEntity();
         PlayerModel<AbstractClientPlayer> model = event.getRenderer().getModel();
 
-        if (wears(player, EquipmentSlot.HEAD)) {
+        boolean helmet = wears(player, EquipmentSlot.HEAD);
+        boolean chestplate = wears(player, EquipmentSlot.CHEST);
+        // HBM's leggings cover the whole leg, so they hide it on their own; the hazmat leggings stop
+        // below the knee and only complete the leg together with the boots.
+        boolean legs = wears(player, EquipmentSlot.LEGS, PowerArmorItem.class)
+            || (wears(player, EquipmentSlot.LEGS) && wears(player, EquipmentSlot.FEET));
+
+        if (helmet) {
             model.hat.visible = false;
             // 3D Skin Layers builds its hair mesh from the outer texture layer, inflated like the hat
             // layer - it would grow through the hood. Its meshes are gated on the head part, which is
@@ -77,7 +85,7 @@ public final class HazmatBodyReplacement {
         } else if (SUPPRESSED.remove(player)) {
             ThirdPartySkinLayers.invalidate(player);
         }
-        if (wears(player, EquipmentSlot.CHEST)) {
+        if (chestplate) {
             model.body.visible = false;
             model.rightArm.visible = false;
             model.leftArm.visible = false;
@@ -87,7 +95,7 @@ public final class HazmatBodyReplacement {
         }
         // The leggings end below the knee; only the boots complete the leg, so the vanilla legs are
         // kept (and the leggings ride over them) until both pieces are on.
-        if (wears(player, EquipmentSlot.LEGS) && wears(player, EquipmentSlot.FEET)) {
+        if (legs) {
             model.rightLeg.visible = false;
             model.leftLeg.visible = false;
             model.leftPants.visible = false;
@@ -97,6 +105,12 @@ public final class HazmatBodyReplacement {
 
     private static boolean wears(AbstractClientPlayer player, EquipmentSlot slot) {
         ItemStack stack = player.getItemBySlot(slot);
-        return !stack.isEmpty() && stack.getItem() instanceof HazmatArmorItem;
+        return !stack.isEmpty()
+            && (stack.getItem() instanceof HazmatArmorItem || stack.getItem() instanceof PowerArmorItem);
+    }
+
+    private static boolean wears(AbstractClientPlayer player, EquipmentSlot slot, Class<?> itemType) {
+        ItemStack stack = player.getItemBySlot(slot);
+        return !stack.isEmpty() && itemType.isInstance(stack.getItem());
     }
 }

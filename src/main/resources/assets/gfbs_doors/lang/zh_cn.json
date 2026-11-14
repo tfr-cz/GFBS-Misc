@@ -92,5 +92,9 @@
   "item.gfbs_doors.hazmat_helmet": "防护服头盔",
   "item.gfbs_doors.hazmat_chest": "防护服胸甲",
   "item.gfbs_doors.hazmat_legs": "防护服护腿",
-  "item.gfbs_doors.hazmat_boots": "防护服靴子"
+  "item.gfbs_doors.hazmat_boots": "防护服靴子",
+  "item.gfbs_doors.power_helmet": "T-51b动力装甲 头盔",
+  "item.gfbs_doors.power_chest": "T-51b动力装甲 胸甲",
+  "item.gfbs_doors.power_legs": "T-51b动力装甲 护腿",
+  "item.gfbs_doors.power_boots": "T-51b动力装甲 靴子"
 }
