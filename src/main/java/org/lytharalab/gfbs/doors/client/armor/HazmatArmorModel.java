@@ -65,6 +65,18 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
         return new HazmatArmorModel(definition.bakeRoot());
     }
 
+    /**
+     * The translucent pane, drawn by {@code HazmatVisorLayer} rather than by the armour layer.
+     *
+     * <p>The armour layer's {@code RenderType.armorCutoutNoCull} cannot do partial alpha, so the
+     * pane's cell in the helmet sheet is empty (the box is discarded by the alpha test) and the pane
+     * is rendered once more from {@code hazmat_visor.png} with {@code RenderType.entityTranslucent}.
+     * The part is kept in the model so the baked UVs and the pinned pose come for free.</p>
+     */
+    public ModelPart visor() {
+        return this.head.getChild("visor");
+    }
+
     // ------------------------------------------------------------------ slots
 
     /** Layered hood, recessed visor with a frame, chin vent, side filter canisters and head lamp. */
@@ -75,17 +87,14 @@ public final class HazmatArmorModel extends HumanoidModel<LivingEntity> {
         head.addOrReplaceChild("hood", boxes(PRIMARY_U, PRIMARY_V)
             .addBox(-4.78F, -10.18F, -4.78F, 9.57F, 1.82F, 9.57F)      // crown
             .addBox(-5.24F, -8.35F, -5.24F, 10.49F, 2.5F, 10.49F)       // upper shell
-            .addBox(-5.18F, -5.8F, -5.24F, 0.95F, 4.54F, 10.43F)        // left wall, rim stops above the gorget
-            .addBox(4.23F, -5.8F, -5.24F, 0.95F, 4.54F, 10.43F)         // right wall
-            .addBox(-5.24F, -5.86F, 2.76F, 10.49F, 4.66F, 2.48F),        // back wall
+            .addBox(-5.24F, -5.86F, -5.24F, 1.01F, 6.21F, 10.49F)        // left wall, down to the neck base
+            .addBox(4.23F, -5.86F, -5.24F, 1.01F, 6.21F, 10.49F)         // right wall
+            .addBox(-4.23F, -5.86F, 2.76F, 8.46F, 6.21F, 2.48F),         // back wall, mitred into the side walls
             PartPose.ZERO);
         head.addOrReplaceChild("hoodTrim", boxes(SHADOW_U, SHADOW_V)
             .addBox(-5.43F, -7.1F, -5.43F, 10.86F, 0.77F, 10.86F)       // panel seam band
             .addBox(-5.06F, -0.19F, 2.67F, 10.12F, 1.06F, 2.67F)         // rear skirt
             .addBox(-4.97F, -9.22F, -4.97F, 9.94F, 0.67F, 9.94F),      // crown step
-            PartPose.ZERO);
-        head.addOrReplaceChild("seal", boxes(DARK_U, DARK_V)
-            .addBox(-4.9F, -1.3F, -4.9F, 9.8F, 1.4F, 9.8F),             // hood lining: closes the rim opening
             PartPose.ZERO);
         head.addOrReplaceChild("face", boxes(DARK_U, DARK_V)
             .addBox(-4.78F, -6.62F, -6.07F, 9.57F, 1.34F, 1.38F)        // brow brim

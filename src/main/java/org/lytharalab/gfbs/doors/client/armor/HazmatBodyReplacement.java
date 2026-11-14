@@ -11,6 +11,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 /**
  * Replaces the player's own model with the suit wherever the suit covers the body.
  *
@@ -23,7 +27,10 @@ import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
  *
  * <p>Coverage, so nothing goes missing:</p>
  * <ul>
- *   <li>helmet hides {@code head} - the hood covers it whole, and the visor is opaque anyway</li>
+ *   <li>helmet hides only {@code hat}: the head itself stays, because the visor is glass and the
+ *       face is supposed to be visible through it. The hat layer is hidden because it is inflated by
+ *       0.5 and would poke through the hood's walls (the hood's inside is only 0.23 wider than the
+ *       head)</li>
  *   <li>chestplate hides {@code body} and both arms - the sleeves reach past the wrist into the gloves
  *       and the torso runs from the collar to below the belt</li>
  *   <li>leggings hide both legs, but only together with the boots: the leggings stop below the knee
@@ -47,6 +54,10 @@ import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
     value = {Dist.CLIENT}
 )
 public final class HazmatBodyReplacement {
+    /** Players whose 3D skin meshes were dropped while the helmet hid their hair. */
+    private static final Set<AbstractClientPlayer> SUPPRESSED =
+        Collections.newSetFromMap(new WeakHashMap<>());
+
     private HazmatBodyReplacement() {
     }
 
@@ -57,8 +68,14 @@ public final class HazmatBodyReplacement {
         PlayerModel<AbstractClientPlayer> model = event.getRenderer().getModel();
 
         if (wears(player, EquipmentSlot.HEAD)) {
-            model.head.visible = false;
             model.hat.visible = false;
+            // 3D Skin Layers builds its hair mesh from the outer texture layer, inflated like the hat
+            // layer - it would grow through the hood. Its meshes are gated on the head part, which is
+            // visible now, so they have to be dropped explicitly while the helmet is on.
+            SUPPRESSED.add(player);
+            ThirdPartySkinLayers.suppress(player);
+        } else if (SUPPRESSED.remove(player)) {
+            ThirdPartySkinLayers.invalidate(player);
         }
         if (wears(player, EquipmentSlot.CHEST)) {
             model.body.visible = false;
