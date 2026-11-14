@@ -1,0 +1,20 @@
+# Protective suit visor pane, authored in the vanilla biped model space the armour model uses
+# (1 unit = 1/16 block, +Y down, +Z south), so HazmatVisorLayer only has to apply the head part's
+# transform and a 1/16 scale.
+#
+# A single quad recessed 0.15 behind the frame's front face: the frame reads as a bezel and the pane
+# never meets the frame's planes. Material `visor_glass` has d 0.45, which ObjAssetImporter turns
+# into AlphaMode.BLEND, and the renderer maps that to its translucent render type.
+mtllib visor.mtl
+o visor
+usemtl visor_glass
+v -3.900000 -5.220000 -5.830000
+v 3.890000 -5.220000 -5.830000
+v 3.890000 -0.370000 -5.830000
+v -3.900000 -0.370000 -5.830000
+vt 0.000000 1.000000
+vt 1.000000 1.000000
+vt 1.000000 0.000000
+vt 0.000000 0.000000
+vn 0.000000 0.000000 -1.000000
+f 1/1/1 2/2/1 3/3/1 4/4/1

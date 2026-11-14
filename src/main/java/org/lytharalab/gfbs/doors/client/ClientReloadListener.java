@@ -9,6 +9,7 @@ import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.lytharalab.gfbs.doors.client.armor.HazmatVisorModel;
 
 @OnlyIn(Dist.CLIENT)
 public final class ClientReloadListener implements PreparableReloadListener {
@@ -25,6 +26,7 @@ public final class ClientReloadListener implements PreparableReloadListener {
             DoorVisualCache.clear();
             DoorModelAssets.clear();
             DoorItemRenderer.clear();
+            HazmatVisorModel.clear();
             TransitionSealAnimation.clear();
         }, gameExecutor);
     }

@@ -1,0 +1,9 @@
+mtllib visor.mtl
+
+newmtl visor_glass
+Ka 0.0 0.0 0.0
+Kd 1.0 1.0 1.0
+Ks 0.0 0.0 0.0
+d 0.45
+illum 1
+map_Kd tex/hazmat_visor.png

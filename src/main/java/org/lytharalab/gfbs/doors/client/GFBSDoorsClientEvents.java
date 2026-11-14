@@ -5,6 +5,7 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggingOut;
 import net.minecraftforge.event.level.LevelEvent.Unload;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import org.lytharalab.gfbs.doors.client.armor.HazmatVisorModel;
 
 @EventBusSubscriber(
     modid = "gfbs_misc",
@@ -21,6 +22,7 @@ public final class GFBSDoorsClientEvents {
         DoorModelAssets.clear();
         DoorItemRenderer.clear();
         TransitionSealAnimation.clear();
+        HazmatVisorModel.clear();
     }
 
     @SubscribeEvent
