@@ -7,6 +7,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.lytharalab.gfbs.doors.client.armor.HazmatVisorModel;
 import org.lytharalab.gfbs.doors.client.armor.PowerArmorModels;
+import org.lytharalab.gfbs.doors.client.weapon.CrucibleModel;
 
 @EventBusSubscriber(
     modid = "gfbs_misc",
@@ -24,7 +25,7 @@ public final class GFBSDoorsClientEvents {
         DoorItemRenderer.clear();
         TransitionSealAnimation.clear();
         HazmatVisorModel.clear();        PowerArmorModels.clear();
-        org.lytharalab.gfbs.doors.client.weapon.CrucibleModel.clear();
+        CrucibleModel.clear();
     }
 
     @SubscribeEvent

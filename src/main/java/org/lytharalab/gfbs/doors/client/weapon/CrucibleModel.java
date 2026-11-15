@@ -79,7 +79,9 @@ public final class CrucibleModel {
         requested = true;
         ClientGltfApi.models().load(ID).whenComplete((asset, error) -> {
             if (error != null) {
-                requested = false;
+                // Stay marked as requested: the renderer asks on every frame it draws the sword, and a failed load
+                // that clears the flag would retry the 124 KB import dozens of times a second. A resource reload
+                // calls clear() down to the same flag.
                 LOGGER.error("Unable to load the Crucible model {}", ID,
                     error instanceof CompletionException && error.getCause() != null ? error.getCause() : error);
                 return;

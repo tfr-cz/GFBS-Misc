@@ -11,6 +11,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lytharalab.gfbs.doors.client.armor.HazmatVisorModel;
 import org.lytharalab.gfbs.doors.client.armor.PowerArmorModels;
+import org.lytharalab.gfbs.doors.client.weapon.CrucibleModel;
 
 @OnlyIn(Dist.CLIENT)
 public final class ClientReloadListener implements PreparableReloadListener {
@@ -28,7 +29,7 @@ public final class ClientReloadListener implements PreparableReloadListener {
             DoorModelAssets.clear();
             DoorItemRenderer.clear();
             HazmatVisorModel.clear();            PowerArmorModels.clear();
-        org.lytharalab.gfbs.doors.client.weapon.CrucibleModel.clear();
+        CrucibleModel.clear();
             TransitionSealAnimation.clear();
         }, gameExecutor);
     }
