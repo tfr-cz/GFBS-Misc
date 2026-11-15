@@ -45,10 +45,16 @@ The instance path comes from `--instance`, `$GFBS_INSTANCE`, or `.scratch/runtim
 ## When `git push` cannot reach GitHub
 
 On this machine git's schannel backend fails the TLS revocation check (`CRYPT_E_NO_REVOCATION_CHECK`) and
-`http.schannelCheckRevoke=false` does not help; `curl --ssl-no-revoke` and `gh api` both still work. Push through
-the Git Data API instead, which keeps the commit SHAs: `POST /git/blobs` per changed blob, `POST /git/trees` with
-`base_tree` = the remote head's tree, `POST /git/commits` with the original author/committer, then
-`PATCH /git/refs/heads/master`. Verify by comparing `git rev-parse master^{tree}` with the remote commit's tree.
+`http.schannelCheckRevoke=false` does not help; `curl --ssl-no-revoke` and `gh api` both still work. Run
+`python tools/push_gitdata.py` (add `--dry-run` to see the plan): it uploads only the objects in
+`git rev-list --objects <remote>..HEAD`, rebuilds the trees child-first, replays each commit with its original
+identity and dates, then fast-forwards the ref. Object ids are content addressed, so a correct run reproduces
+the local SHAs exactly and the script aborts if any object comes back different.
+
+Two things that will bite if you edit it: `POST /git/trees` rejects a reference to a tree that does not exist
+yet, and the root tree's path is the empty string, so sorting trees by slash count alone puts it first by
+mistake — `depth()` pushes it to the end. Afterwards confirm `git rev-parse HEAD` equals
+`gh api repos/<slug>/git/ref/heads/master --jq .object.sha`; the ref is only moved once every object landed.
 
 ## Inspecting a jar (NTM, Forge, glTF)
 
