@@ -66,6 +66,11 @@ public final class PowerArmorHud implements IGuiOverlay {
             }
             drawRow(graphics, left, baseline - ROW_STEP * (index + 1), chargeRatio(piece));
         }
+        // GuiGraphics batches vertices; the shader colour is global and is read when the batch is uploaded. Other
+        // HUD code animates that colour every frame, so a late upload would tint the fills with somebody else's
+        // colour - flush now, while the colour is still white, or the rows visibly pulse.
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.flush();
         gui.leftHeight += RESERVED_HEIGHT;
 
         if (DEBUG) {
