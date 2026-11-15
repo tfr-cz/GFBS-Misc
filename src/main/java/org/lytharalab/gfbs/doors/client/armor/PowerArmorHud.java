@@ -80,7 +80,7 @@ public final class PowerArmorHud implements IGuiOverlay {
 
         renderCalls++;
         if (DEBUG || freeLogLines < FREE_LOG_LINES) {
-            logWhenItChanges(player, armor, gui.leftHeight, baseline);
+            logWhenItChanges(player, armor, screenHeight, gui.leftHeight, baseline);
         }
     }
 
@@ -109,16 +109,18 @@ public final class PowerArmorHud implements IGuiOverlay {
     }
 
     /**
-     * Logs every change of any rendered value, with the raw NBT state behind it.
-     *
-     * <p>The point is to tell two failures apart that look identical on screen: a value that is genuinely moving
-     * (server and client disagree, or the tag is added and removed between ticks) versus a value that is steady
-     * and a drawing that is not. {@code tags=} records whether each stack carries a {@code charge} tag at all,
-     * because a missing tag reads as "full" in {@link PowerArmorCharge}.</p>
+     * Logs every change of any rendered value, with enough context to tell the candidate causes apart: whether
+     * the overlay draws once per frame ({@code calls}), whether the four stacks are the same objects
+     * ({@code ids=}), which items they are ({@code items=}), and what the first stack's tag actually holds
+     * ({@code tag0=}). Values that jump between a few arithmetic sequences mean several different stacks are
+     * being read in turn, not that one value is oscillating.
      */
-    private static void logWhenItChanges(Player player, java.util.List<ItemStack> armor, int leftHeight, int baseline) {
+    private static void logWhenItChanges(Player player, java.util.List<ItemStack> armor, int screenHeight,
+                                         int leftHeight, int baseline) {
         long[] charges = new long[armor.size()];
         StringBuilder tags = new StringBuilder();
+        StringBuilder ids = new StringBuilder();
+        StringBuilder items = new StringBuilder();
         boolean changed = false;
         for (int i = 0; i < armor.size(); i++) {
             ItemStack piece = armor.get(i);
@@ -126,6 +128,8 @@ public final class PowerArmorHud implements IGuiOverlay {
             charges[i] = power ? PowerArmorCharge.get(piece) : -1L;
             boolean tagged = piece.getTag() != null && piece.getTag().contains("charge");
             tags.append(tagged ? 'T' : (power ? 'm' : '-'));
+            ids.append(Integer.toHexString(System.identityHashCode(piece))).append(' ');
+            items.append(piece.isEmpty() ? "empty" : piece.getItem().toString()).append(' ');
             if (i < lastLoggedCharges.length && charges[i] != lastLoggedCharges[i]) {
                 changed = true;
             }
@@ -135,11 +139,13 @@ public final class PowerArmorHud implements IGuiOverlay {
         }
         lastLoggedCharges = charges;
         freeLogLines++;
+        ItemStack first = armor.isEmpty() ? ItemStack.EMPTY : armor.get(0);
         org.slf4j.LoggerFactory.getLogger("gfbs_doors").info(
-            "power hud: tick={} calls={} side={} baseline={} leftHeight={} tags={} charges={} {} {} {} {}",
-            player.level().getGameTime(), renderCalls, player.level().isClientSide() ? "client" : "server",
-            baseline, leftHeight, tags,
+            "power hud: tick={} calls={} screenH={} leftHeight={} baseline={} tags={} "
+                + "charges={} {} {} {} {} who={}/{} ids={} items={} tag0={}",
+            player.level().getGameTime(), renderCalls, screenHeight, leftHeight, baseline, tags,
             charges.length > 0 ? charges[0] : -1L, charges.length > 1 ? charges[1] : -1L,
-            charges.length > 2 ? charges[2] : -1L, charges.length > 3 ? charges[3] : -1L);
+            charges.length > 2 ? charges[2] : -1L, charges.length > 3 ? charges[3] : -1L,
+            player.getGameProfile().getName(), player.getId(), ids, items, first.getTag());
     }
 }
