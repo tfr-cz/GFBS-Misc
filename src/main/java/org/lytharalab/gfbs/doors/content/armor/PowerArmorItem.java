@@ -104,14 +104,33 @@ public final class PowerArmorItem extends ArmorItem {
      */
     @Override
     public void setDamage(ItemStack stack, int damage) {
-        // hurt() hands over the *accumulated* damage (current + amount), not the increment: the item never stores
-        // damage because this override does not call super, so the stored value stays where it started and only
-        // the difference is this hit's worth. Charging the absolute value would bill a fresh hit for the whole
-        // history - which is exactly how a suit lost hundreds of thousands of charge to one scratch.
-        int current = stack.getDamageValue();
-        int increment = damage - current;
+        // hurt() hands over the *accumulated* damage (current + amount), not the increment. This item never stores
+        // damage, but stacks from older builds still carry one: read the difference first, then clear whatever was
+        // stored, so both this hit and every later one are billed only for the damage actually taken.
+        int stored = stack.getDamageValue();
+        int increment = damageCost(damage, stored);
+        if (stored != 0) {
+            super.setDamage(stack, 0);
+        }
         if (increment > 0) {
             PowerArmorCharge.discharge(stack, (long) increment * PowerArmorCharge.DAMAGE_CONSUMPTION);
+        }
+    }
+
+    /** The charge-bearing part of a damage event: {@code incoming} minus whatever the stack still had stored. */
+    static int damageCost(int incoming, int stored) {
+        return Math.max(0, incoming - stored);
+    }
+
+    /**
+     * Drops a leftover {@code Damage} value (older builds wrote them; this item never should).
+     *
+     * <p>Called on login and respawn for everything the player carries, so no suit keeps pretending to be damaged
+     * forever, and from {@link #setDamage} for the stacks that are already out there in the world.</p>
+     */
+    public void forgetStoredDamage(ItemStack stack) {
+        if (stack.getDamageValue() != 0) {
+            super.setDamage(stack, 0);
         }
     }
 
