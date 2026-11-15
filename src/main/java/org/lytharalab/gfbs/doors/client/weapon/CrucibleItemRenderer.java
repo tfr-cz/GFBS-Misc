@@ -56,7 +56,7 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
      * much larger than a sword on purpose, because NTM's Crucible is a three-block slab of a blade.</p>
      */
     private static float thirdRoll = -40.0F;
-    private static float thirdYaw = 90.0F;
+    private static float thirdYaw = -90.0F;
     private static float thirdY = 1.6F;
     private static float thirdSize = 3.0F;
     private static float firstRoll = -10.0F;
