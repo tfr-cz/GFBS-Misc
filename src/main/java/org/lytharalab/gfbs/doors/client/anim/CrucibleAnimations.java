@@ -9,6 +9,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lytharalab.gfbs.doors.content.ModItems;
 import org.lytharalab.gfbs.doors.content.ModSounds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Random;
 
@@ -30,7 +32,16 @@ public final class CrucibleAnimations {
     public static final String GUARD_ROT = "GUARD_ROT";
 
     private static final Random RANDOM = new Random();
+    /**
+     * The first few triggers are logged at INFO so a "the animation never plays" report can be told apart from
+     * "the clip is wrong" without asking for a debug flag to be set.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger("gfbs_doors/crucible");
+    private static final int LOGGED_TRIGGERS = 3;
+    private static int logged;
     private static Item lastHeld;
+    private static boolean wasSwinging;
+    private static int lastSwingTime;
 
     private CrucibleAnimations() {
     }
@@ -40,6 +51,7 @@ public final class CrucibleAnimations {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) {
             lastHeld = null;
+            wasSwinging = false;
             return;
         }
         ItemStack held = player.getMainHandItem();
@@ -50,13 +62,21 @@ public final class CrucibleAnimations {
             return;
         }
         int slot = player.getInventory().selected;
-        // HBM only started a swing clip when the previous one had run out, so a fast combo animates every third
-        // hit instead of restarting the tumble every 250 ms.
-        if (player.swinging && !ItemAnimations.isPlaying(SWING_ROT)) {
+        // A swing starts when `swinging` turns on, or when swingTime jumps back (a second swing before the first
+        // finished, which is what attack speed 4.0 looks like).
+        boolean started = player.swinging
+            && (!wasSwinging || (player.swingTime >= 0 && player.swingTime < lastSwingTime));
+        if (started) {
+            if (logged < LOGGED_TRIGGERS) {
+                logged++;
+                LOGGER.info("Crucible swing animation started (slot {})", slot);
+            }
             ItemAnimations.play(slot, item, swing());
             player.playNotifySound(ModSounds.CRUCIBLE_SWING.get(), SoundSource.PLAYERS, 1.0F,
                 0.8F + RANDOM.nextFloat() * 0.2F);
         }
+        wasSwinging = player.swinging;
+        lastSwingTime = player.swinging ? player.swingTime : Integer.MAX_VALUE;
         if (item != lastHeld) {
             ItemAnimations.play(slot, item, equip());
         }

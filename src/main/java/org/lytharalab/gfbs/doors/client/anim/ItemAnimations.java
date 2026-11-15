@@ -64,12 +64,13 @@ public final class ItemAnimations {
         return sequence.transformation((int) (Util.getMillis() - animation.startedAt()));
     }
 
-    public static void applyTranslation(PoseStack pose, String bus) {
+    /** Translates by one track's values, optionally scaled - a clip authored for a big model needs shrinking. */
+    public static void applyTranslation(PoseStack pose, String bus, float scale) {
         float[] values = transformation(bus);
         if (values != null) {
-            pose.translate(values[BusAnimationSequence.Dimension.TX.ordinal()],
-                values[BusAnimationSequence.Dimension.TY.ordinal()],
-                values[BusAnimationSequence.Dimension.TZ.ordinal()]);
+            pose.translate(scale * values[BusAnimationSequence.Dimension.TX.ordinal()],
+                scale * values[BusAnimationSequence.Dimension.TY.ordinal()],
+                scale * values[BusAnimationSequence.Dimension.TZ.ordinal()]);
         }
     }
 
