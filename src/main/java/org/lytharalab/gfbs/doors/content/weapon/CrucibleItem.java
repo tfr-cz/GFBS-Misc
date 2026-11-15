@@ -101,9 +101,6 @@ public final class CrucibleItem extends SwordItem {
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         if (attacker.level() instanceof ServerLevel server) {
-            server.playSound(null, attacker.getX(), attacker.getY(), attacker.getZ(),
-                ModSounds.CRUCIBLE_SWING.get(), SoundSource.PLAYERS, 1.0F,
-                0.8F + attacker.getRandom().nextFloat() * 0.2F);
             server.playSound(null, target.getX(), target.getY(), target.getZ(),
                 SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR, SoundSource.PLAYERS, 1.0F,
                 0.75F + target.getRandom().nextFloat() * 0.2F);

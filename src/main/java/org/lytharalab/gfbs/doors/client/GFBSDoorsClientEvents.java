@@ -7,6 +7,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import org.lytharalab.gfbs.doors.client.armor.HazmatVisorModel;
 import org.lytharalab.gfbs.doors.client.armor.PowerArmorModels;
+import net.minecraftforge.event.TickEvent;
+import org.lytharalab.gfbs.doors.client.anim.CrucibleAnimations;
+import org.lytharalab.gfbs.doors.client.anim.ItemAnimations;
 import org.lytharalab.gfbs.doors.client.weapon.CrucibleModel;
 
 @EventBusSubscriber(
@@ -26,6 +29,15 @@ public final class GFBSDoorsClientEvents {
         TransitionSealAnimation.clear();
         HazmatVisorModel.clear();        PowerArmorModels.clear();
         CrucibleModel.clear();
+        ItemAnimations.clear();
+    }
+
+    /** Item animations are local-player state advanced by wall clock, so one tick is all they need. */
+    @SubscribeEvent
+    public static void clientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END) {
+            CrucibleAnimations.tick();
+        }
     }
 
     @SubscribeEvent
