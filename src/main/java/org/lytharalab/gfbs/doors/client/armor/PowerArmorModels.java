@@ -35,8 +35,31 @@ import java.util.concurrent.CompletionException;
 public final class PowerArmorModels {
     private static final Logger LOGGER = LoggerFactory.getLogger("gfbs_doors/power_armor");
 
+    /**
+     * A biped part and the pivot vanilla gives it in the rest pose, in model pixels.
+     *
+     * <p>The rest pivot matters because animations move it: TaCZ's third-person gun poses, for one, rewrite
+     * {@code arm.x}/{@code arm.z} to swing the shoulder around the body. A mesh authored in absolute biped
+     * coordinates has to be transformed as {@code T(currentPivot) * R * T(-restPivot)}; using the current pivot
+     * on both sides silently drops the movement and the limb detaches from the joint.</p>
+     */
     public enum Part {
-        HEAD, BODY, LEFT_ARM, RIGHT_ARM, LEFT_LEG, RIGHT_LEG
+        HEAD(0.0F, 0.0F, 0.0F),
+        BODY(0.0F, 0.0F, 0.0F),
+        LEFT_ARM(5.0F, 2.0F, 0.0F),
+        RIGHT_ARM(-5.0F, 2.0F, 0.0F),
+        LEFT_LEG(1.9F, 12.0F, 0.0F),
+        RIGHT_LEG(-1.9F, 12.0F, 0.0F);
+
+        public final float restX;
+        public final float restY;
+        public final float restZ;
+
+        Part(float restX, float restY, float restZ) {
+            this.restX = restX;
+            this.restY = restY;
+            this.restZ = restZ;
+        }
     }
 
     public record Binding(int node, Part part) {

@@ -72,16 +72,30 @@ public final class PowerArmorLayer extends RenderLayer<AbstractClientPlayer, Pla
         pose.popPose();
     }
 
-    /** {@code T(pivot) * R * T(-pivot)} in biped pixels, written as the node's local matrix. */
+    /**
+     * The node matrix for one part: {@code T(pivot) * R * T(-restPivot)}, in biped pixels.
+     *
+     * <p>The two pivots are not the same point. Animations move {@code part.x/y/z} - TaCZ's gun poses swing the
+     * shoulders around the body exactly that way - and the mesh is authored in absolute biped coordinates, so it
+     * has to be rotated about the <em>rest</em> pivot and then translated to the moved one. Using the moved pivot
+     * on both sides cancels the translation and leaves the limb hanging off its joint.</p>
+     */
     public static void posePart(PowerArmorModels.Suit suit, PowerArmorModels.Binding binding, ModelPart part) {
-        Quaternionf rotation = new Quaternionf().rotationZYX(part.zRot, part.yRot, part.xRot);
+        float[] columnMajor = localMatrix(part.x, part.y, part.z, part.zRot, part.yRot, part.xRot, binding.part());
+        suit.instance().nodes().node(binding.node()).localMatrix(columnMajor);
+    }
+
+    /** Package-private for the geometry test: the matrix a moved pivot produces. */
+    static float[] localMatrix(float x, float y, float z, float zRot, float yRot, float xRot,
+                               PowerArmorModels.Part part) {
+        Quaternionf rotation = new Quaternionf().rotationZYX(zRot, yRot, xRot);
         Matrix4f matrix = new Matrix4f()
-            .translate(part.x, part.y, part.z)
+            .translate(x, y, z)
             .rotate(rotation)
-            .translate(-part.x, -part.y, -part.z);
+            .translate(-part.restX, -part.restY, -part.restZ);
         float[] columnMajor = new float[16];
         matrix.get(columnMajor);
-        suit.instance().nodes().node(binding.node()).localMatrix(columnMajor);
+        return columnMajor;
     }
 
     public static ModelPart partOf(PlayerModel<?> model, PowerArmorModels.Part part) {
