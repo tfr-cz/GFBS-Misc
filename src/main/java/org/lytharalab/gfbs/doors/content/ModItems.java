@@ -12,6 +12,7 @@ import net.minecraftforge.registries.RegistryObject;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import org.lytharalab.gfbs.doors.content.armor.HazmatArmorItem;
+import org.lytharalab.gfbs.doors.content.armor.EuphemiumArmorItem;
 import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
 import org.lytharalab.gfbs.doors.content.armor.FusionCoreItem;
 import org.lytharalab.gfbs.doors.content.block.DoorConfiguratorItem;
@@ -31,6 +32,10 @@ public final class ModItems {
     public static final RegistryObject<Item> POWER_CHEST;
     public static final RegistryObject<Item> POWER_LEGS;
     public static final RegistryObject<Item> POWER_BOOTS;
+    public static final RegistryObject<Item> EUPHEMIUM_HELMET;
+    public static final RegistryObject<Item> EUPHEMIUM_CHEST;
+    public static final RegistryObject<Item> EUPHEMIUM_LEGS;
+    public static final RegistryObject<Item> EUPHEMIUM_BOOTS;
     public static final RegistryObject<Item> FUSION_CORE;
 
     private ModItems() {
@@ -65,6 +70,14 @@ public final class ModItems {
         POWER_CHEST = ITEMS.register("power_chest", () -> new PowerArmorItem(ArmorItem.Type.CHESTPLATE, new Properties()));
         POWER_LEGS = ITEMS.register("power_legs", () -> new PowerArmorItem(ArmorItem.Type.LEGGINGS, new Properties()));
         POWER_BOOTS = ITEMS.register("power_boots", () -> new PowerArmorItem(ArmorItem.Type.BOOTS, new Properties()));
+
+        // HBM's Euphemium ("Ep") suit. Vanilla-rendered, so no models of our own, and deliberately kept out of
+        // the creative tab: NTM passes setCreativeTab(null), which makes /give the only way to obtain it.
+        EUPHEMIUM_HELMET = ITEMS.register("euphemium_helmet", () -> new EuphemiumArmorItem(ArmorItem.Type.HELMET));
+        EUPHEMIUM_CHEST = ITEMS.register("euphemium_chest", () -> new EuphemiumArmorItem(ArmorItem.Type.CHESTPLATE));
+        EUPHEMIUM_LEGS = ITEMS.register("euphemium_legs", () -> new EuphemiumArmorItem(ArmorItem.Type.LEGGINGS));
+        EUPHEMIUM_BOOTS = ITEMS.register("euphemium_boots", () -> new EuphemiumArmorItem(ArmorItem.Type.BOOTS));
+
         FUSION_CORE = ITEMS.register("fusion_core", () -> new FusionCoreItem(new Properties()));
     }
 }

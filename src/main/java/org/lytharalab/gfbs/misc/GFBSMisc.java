@@ -10,6 +10,7 @@ import org.lytharalab.gfbs.doors.content.ModBlocks;
 import org.lytharalab.gfbs.doors.content.ModCreativeTabs;
 import org.lytharalab.gfbs.doors.content.ModItems;
 import org.lytharalab.gfbs.doors.content.ModSounds;
+import org.lytharalab.gfbs.doors.content.armor.EuphemiumArmorItem;
 import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
 import org.lytharalab.gfbs.misc.network.MiscNetwork;
 import org.slf4j.Logger;
@@ -37,5 +38,10 @@ public final class GFBSMisc {
             () -> ModItems.POWER_CHEST.get(),
             () -> ModItems.POWER_LEGS.get(),
             () -> ModItems.POWER_BOOTS.get()));
+        event.enqueueWork(() -> EuphemiumArmorItem.registerResistances(
+            () -> ModItems.EUPHEMIUM_HELMET.get(),
+            () -> ModItems.EUPHEMIUM_CHEST.get(),
+            () -> ModItems.EUPHEMIUM_LEGS.get(),
+            () -> ModItems.EUPHEMIUM_BOOTS.get()));
     }
 }

@@ -33,6 +33,8 @@ public final class ModCreativeTabs {
                     output.accept((ItemLike)ModItems.POWER_LEGS.get());
                     output.accept((ItemLike)ModItems.POWER_BOOTS.get());
                     output.accept((ItemLike)ModItems.FUSION_CORE.get());
+                    // The Euphemium set is missing on purpose: NTM gives it no creative tab either, so it stays a
+                    // /give-only item. Nothing else adds items implicitly, so "not listed here" is what hides it.
                 })
                 .build()
     );

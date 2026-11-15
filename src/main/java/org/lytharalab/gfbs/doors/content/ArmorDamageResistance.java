@@ -8,6 +8,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import org.lytharalab.gfbs.doors.content.armor.EuphemiumArmorItem;
 import org.lytharalab.gfbs.doors.content.armor.resistance.ArmorResistances;
 
 /**
@@ -44,6 +45,9 @@ public final class ArmorDamageResistance {
         float threshold = Math.max(0.0F, dtDr[0]);
         float resistance = dtDr[1];
         if (resistance >= 1.0F || (threshold > 0.0F && threshold >= event.getAmount())) {
+            // HBM turned a hit the suit fully absorbed into a "break" tink; the hook is here because this is the
+            // one place that knows the hit really was absorbed rather than merely cancelled by someone else.
+            EuphemiumArmorItem.playAbsorbSound((Player) entity);
             event.setCanceled(true);
         }
     }

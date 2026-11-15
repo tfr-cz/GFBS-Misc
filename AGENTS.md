@@ -1,8 +1,8 @@
 # AGENTS.md
 
-Doors-only line of **GFBS : Misc** (Forge 1.20.1, `modid = gfbs_misc`): NTM-style doors plus a ported
-T-51b power armour rendered through glTF. The older doors+elevators line lives in another repo; keep
-their resources out of this one.
+Doors-only line of **GFBS : Misc** (Forge 1.20.1, `modid = gfbs_misc`): NTM-style doors plus ported HBM armour -
+the hazmat suit, the T-51b power armour (glTF, `PowerArmorLayer`) and the Euphemium "Ep" set (plain vanilla armour
+layer). The older doors+elevators line lives in another repo; keep their resources out of this one.
 
 ## Pointers
 
@@ -33,6 +33,13 @@ their resources out of this one.
 - An `ItemStack` cannot be created in a unit test on this machine: `Bootstrap.bootStrap()` dies inside Forge's
   `NetworkHooks.init`. Keep the logic worth testing in pure helpers, and gate item-level tests behind
   `assumeTrue(TestBootstrap.itemsAvailable())`.
+- Merely *touching* an `Item` class needs those registries too (`Item` implements `FeatureElement`, which trips
+  `Registries` and then `BuiltInRegistries`), so a test that calls a static helper on an armour item must bootstrap
+  itself. JUnit's class order is not stable: adding one test class once flipped the order and stranded a test that
+  had been living off its neighbour's bootstrap.
+- An armour texture comes from `ForgeHooksClient.getArmorTexture`, which asks `Item#getArmorTexture` and only falls
+  back to `textures/models/armor/<material>_layer_N.png` when that returns null. That is why the per-piece sheets
+  (hazmat, Euphemium) work despite the vanilla default being one sheet per material.
 
 ## Runtime signals
 
