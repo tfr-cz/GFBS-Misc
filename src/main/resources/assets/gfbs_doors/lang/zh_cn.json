@@ -104,5 +104,7 @@
   "death.attack.power_armor_impact": "被动力装甲的落地冲击碾碎了",
   "item.gfbs_doors.fusion_core": "聚变能源核心",
   "tooltip.gfbs_doors.fusion_core": "为穿戴中的动力装甲每件充能 %s HE",
-  "tooltip.gfbs_doors.fusion_core.requires": "[需穿齐整套动力装甲]"
+  "tooltip.gfbs_doors.fusion_core.requires": "[需穿齐整套动力装甲]",
+  "item.gfbs_doors.crucible": "裁决剑",
+  "tooltip.gfbs_doors.crucible.charge": "充能：无限"
 }

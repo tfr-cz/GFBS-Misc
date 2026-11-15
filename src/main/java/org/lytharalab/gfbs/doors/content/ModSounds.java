@@ -41,6 +41,9 @@ public final class ModSounds {
     /** HBM's T-51b jump / landing clips (step.iron_jump, step.iron_land in NTM). */
     public static final RegistryObject<SoundEvent> ARMOR_STEP_JUMP = add("armor.step_jump");
     public static final RegistryObject<SoundEvent> ARMOR_STEP_LAND = add("armor.step_land");
+    /** HBM's Crucible clips: the deploy hiss when it is drawn, the swing whoosh on a hit. */
+    public static final RegistryObject<SoundEvent> CRUCIBLE_DEPLOY = add("weapon.crucible_deploy");
+    public static final RegistryObject<SoundEvent> CRUCIBLE_SWING = add("weapon.crucible_swing");
 
     private ModSounds() {
     }

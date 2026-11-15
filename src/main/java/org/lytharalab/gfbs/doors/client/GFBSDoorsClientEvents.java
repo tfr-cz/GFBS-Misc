@@ -24,6 +24,7 @@ public final class GFBSDoorsClientEvents {
         DoorItemRenderer.clear();
         TransitionSealAnimation.clear();
         HazmatVisorModel.clear();        PowerArmorModels.clear();
+        org.lytharalab.gfbs.doors.client.weapon.CrucibleModel.clear();
     }
 
     @SubscribeEvent

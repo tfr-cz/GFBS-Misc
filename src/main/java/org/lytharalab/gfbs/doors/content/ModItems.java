@@ -17,6 +17,7 @@ import org.lytharalab.gfbs.doors.content.armor.PowerArmorItem;
 import org.lytharalab.gfbs.doors.content.armor.FusionCoreItem;
 import org.lytharalab.gfbs.doors.content.block.DoorConfiguratorItem;
 import org.lytharalab.gfbs.doors.content.block.DoorItem;
+import org.lytharalab.gfbs.doors.content.weapon.CrucibleItem;
 
 public final class ModItems {
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(Registries.ITEM, "gfbs_doors");
@@ -37,6 +38,7 @@ public final class ModItems {
     public static final RegistryObject<Item> EUPHEMIUM_LEGS;
     public static final RegistryObject<Item> EUPHEMIUM_BOOTS;
     public static final RegistryObject<Item> FUSION_CORE;
+    public static final RegistryObject<Item> CRUCIBLE;
 
     private ModItems() {
     }
@@ -79,5 +81,7 @@ public final class ModItems {
         EUPHEMIUM_BOOTS = ITEMS.register("euphemium_boots", () -> new EuphemiumArmorItem(ArmorItem.Type.BOOTS));
 
         FUSION_CORE = ITEMS.register("fusion_core", () -> new FusionCoreItem(new Properties()));
+        // HBM's Crucible, 30 000 damage and a held speed bonus, drawn from its own OBJ mesh.
+        CRUCIBLE = ITEMS.register("crucible", CrucibleItem::new);
     }
 }

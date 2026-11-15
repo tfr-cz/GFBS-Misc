@@ -104,5 +104,7 @@
   "death.attack.power_armor_impact": "was pulverised by a power armour slam",
   "item.gfbs_doors.fusion_core": "Fusion Core",
   "tooltip.gfbs_doors.fusion_core": "Charges all worn armour pieces by %s HE",
-  "tooltip.gfbs_doors.fusion_core.requires": "[Requires the full powered set to be worn]"
+  "tooltip.gfbs_doors.fusion_core.requires": "[Requires the full powered set to be worn]",
+  "item.gfbs_doors.crucible": "Crucible",
+  "tooltip.gfbs_doors.crucible.charge": "Charge: infinite"
 }

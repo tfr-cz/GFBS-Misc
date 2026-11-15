@@ -243,5 +243,21 @@
         "attenuation_distance": 16
       }
     ]
+  },
+  "weapon.crucible_deploy": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "gfbs_doors:weapon/cDeploy"
+      }
+    ]
+  },
+  "weapon.crucible_swing": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "gfbs_doors:weapon/cSwing"
+      }
+    ]
   }
 }

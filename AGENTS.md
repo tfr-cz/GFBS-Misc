@@ -1,8 +1,9 @@
 # AGENTS.md
 
-Doors-only line of **GFBS : Misc** (Forge 1.20.1, `modid = gfbs_misc`): NTM-style doors plus ported HBM armour -
-the hazmat suit, the T-51b power armour (glTF, `PowerArmorLayer`) and the Euphemium "Ep" set (plain vanilla armour
-layer). The older doors+elevators line lives in another repo; keep their resources out of this one.
+Doors-only line of **GFBS : Misc** (Forge 1.20.1, `modid = gfbs_misc`): NTM-style doors plus ported HBM gear -
+the hazmat suit, the T-51b power armour (OBJ through `PowerArmorLayer`), the Euphemium "Ep" set (plain vanilla
+armour layer) and the Crucible sword (OBJ through a `BlockEntityWithoutLevelRenderer`). The older doors+elevators
+line lives in another repo; keep their resources out of this one.
 
 ## Pointers
 
@@ -40,6 +41,13 @@ layer). The older doors+elevators line lives in another repo; keep their resourc
 - An armour texture comes from `ForgeHooksClient.getArmorTexture`, which asks `Item#getArmorTexture` and only falls
   back to `textures/models/armor/<material>_layer_N.png` when that returns null. That is why the per-piece sheets
   (hazmat, Euphemium) work despite the vanilla default being one sheet per material.
+- A mesh item needs `{"parent": "builtin/entity"}` in its item model plus `IClientItemExtensions#getCustomRenderer`;
+  Forge then skips the baked quads and calls `BlockEntityWithoutLevelRenderer#renderByItem` instead. On that path
+  the JSON `display` block is **not** applied and the pose arrives with the item cube's near corner at the origin,
+  which is why every such renderer starts with `translate(0.5, 0.5, 0.5)` and owns the rest of the transform.
+- glTF/OBJ meshes and their textures are imported by scripts under `tools/` and loaded through
+  `ClientGltfApi.models().load(...)`; a missing `usemtl` in the source OBJ means no material, so the import script
+  has to add one.
 
 ## Runtime signals
 

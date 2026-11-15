@@ -28,6 +28,7 @@ public final class ClientReloadListener implements PreparableReloadListener {
             DoorModelAssets.clear();
             DoorItemRenderer.clear();
             HazmatVisorModel.clear();            PowerArmorModels.clear();
+        org.lytharalab.gfbs.doors.client.weapon.CrucibleModel.clear();
             TransitionSealAnimation.clear();
         }, gameExecutor);
     }
