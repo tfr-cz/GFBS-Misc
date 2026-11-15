@@ -46,26 +46,24 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
      */
     private static final float GUI_HEIGHT = 0.95F;
     private static final float GROUND_HEIGHT = 0.55F;
-    private static final float FIRST_PERSON_HEIGHT = 1.5F;
-    private static final float THIRD_PERSON_HEIGHT = 1.8F;
     /** HBM's swing translation was authored for a much larger on-screen sword; keep a hint of the lunge. */
     private static final float SWING_LUNGE = 0.4F;
 
     /**
-     * Vanilla's {@code handheld} transform with the translation divided by 16 like the JSON loader does - minus its
-     * -90 degree yaw. That yaw exists because a vanilla sword is a flat quad whose face already points at the viewer;
-     * turning it is what makes a vanilla sword show its edge from the front. HBM wanted the opposite (the Crucible's
-     * blade faces whoever is looking at it), so the roll alone is kept.
+     * Held pose, tuned against NTM screenshots: the vanilla {@code handheld} transform without its -90 degree yaw
+     * (that yaw turns a flat sprite edge-on, which is not what the Crucible does) and with the roll, height and size
+     * adjustable at runtime through {@code /gfbs_crucible} so they can be dialled in without a rebuild.
+     *
+     * <p>{@code y} is in sixteenths of a block, like the JSON, and {@code size} is the sword's height in blocks.</p>
      */
-    private static final ItemTransform THIRD_PERSON = new ItemTransform(
-        new Vector3f(0.0F, 0.0F, 35.0F),
-        new Vector3f(0.0F, 1.6F / 16.0F, 0.5F / 16.0F),
-        new Vector3f(0.85F, 0.85F, 0.85F));
-    /** The first-person hand is rotated the other way round, so the roll has to flip to tilt the blade the same way. */
-    private static final ItemTransform FIRST_PERSON = new ItemTransform(
-        new Vector3f(0.0F, 0.0F, -25.0F),
-        new Vector3f(1.13F / 16.0F, 3.2F / 16.0F, 1.13F / 16.0F),
-        new Vector3f(0.68F, 0.68F, 0.68F));
+    private static float thirdRoll = -40.0F;
+    private static float thirdY = 1.6F;
+    private static float thirdSize = 1.8F;
+    private static float firstRoll = -5.0F;
+    private static float firstY = 3.2F;
+    private static float firstSize = 1.5F;
+    private static ItemTransform thirdTransform;
+    private static ItemTransform firstTransform;
     private static final ItemTransform NONE = new ItemTransform(
         new Vector3f(0.0F, 0.0F, 0.0F),
         new Vector3f(0.0F, 0.0F, 0.0F),
@@ -73,23 +71,61 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
 
     private static CrucibleItemRenderer instance;
 
+    /** Used by {@code /gfbs_crucible}: roll in degrees, y in sixteenths of a block, size in blocks. */
+    public static void setPose(boolean firstPerson, float roll, float y, float size) {
+        if (firstPerson) {
+            firstRoll = roll;
+            firstY = y;
+            firstSize = size;
+            firstTransform = null;
+        } else {
+            thirdRoll = roll;
+            thirdY = y;
+            thirdSize = size;
+            thirdTransform = null;
+        }
+    }
+
+    public static String describePose() {
+        return String.format(java.util.Locale.ROOT,
+            "third: roll %.1f y %.2f size %.2f | first: roll %.1f y %.2f size %.2f",
+            thirdRoll, thirdY / 16.0F, thirdSize, firstRoll, firstY / 16.0F, firstSize);
+    }
+
+    private static ItemTransform thirdTransform() {
+        if (thirdTransform == null) {
+            thirdTransform = new ItemTransform(new Vector3f(0.0F, 0.0F, thirdRoll),
+                new Vector3f(0.0F, thirdY / 16.0F, 0.5F / 16.0F), new Vector3f(0.85F, 0.85F, 0.85F));
+        }
+        return thirdTransform;
+    }
+
+    private static ItemTransform firstTransform() {
+        if (firstTransform == null) {
+            firstTransform = new ItemTransform(new Vector3f(0.0F, 0.0F, firstRoll),
+                new Vector3f(1.13F / 16.0F, firstY / 16.0F, 1.13F / 16.0F),
+                new Vector3f(0.68F, 0.68F, 0.68F));
+        }
+        return firstTransform;
+    }
+
     private static float spriteHeight(ItemDisplayContext context) {
         return switch (context) {
             case GUI -> GUI_HEIGHT;
             case GROUND, FIXED -> GROUND_HEIGHT;
-            case FIRST_PERSON_LEFT_HAND, FIRST_PERSON_RIGHT_HAND -> FIRST_PERSON_HEIGHT;
-            default -> THIRD_PERSON_HEIGHT;
+            case FIRST_PERSON_LEFT_HAND, FIRST_PERSON_RIGHT_HAND -> firstSize;
+            default -> thirdSize;
         };
     }
 
     private static ItemTransform transformFor(ItemDisplayContext context) {
         if (context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
             || context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
-            return FIRST_PERSON;
+            return firstTransform();
         }
         if (context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
             || context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
-            return THIRD_PERSON;
+            return thirdTransform();
         }
         return NONE;
     }
