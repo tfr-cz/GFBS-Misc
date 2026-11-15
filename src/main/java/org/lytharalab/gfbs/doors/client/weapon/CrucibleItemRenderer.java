@@ -56,10 +56,12 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
      *
      * <p>{@code y} is in sixteenths of a block, like the JSON, and {@code size} is the sword's height in blocks.</p>
      */
-    private static float thirdRoll = -40.0F;
+    private static float thirdRoll = 20.0F;
+    private static float thirdYaw = 0.0F;
     private static float thirdY = 1.6F;
     private static float thirdSize = 1.8F;
-    private static float firstRoll = -5.0F;
+    private static float firstRoll = -15.0F;
+    private static float firstYaw = 0.0F;
     private static float firstY = 3.2F;
     private static float firstSize = 1.5F;
     private static ItemTransform thirdTransform;
@@ -71,15 +73,21 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
 
     private static CrucibleItemRenderer instance;
 
-    /** Used by {@code /gfbs_crucible}: roll in degrees, y in sixteenths of a block, size in blocks. */
-    public static void setPose(boolean firstPerson, float roll, float y, float size) {
+    /**
+     * Used by {@code /gfbs_crucible}. {@code yaw} spins the blade around its own length, which is the knob that turns
+     * the flat towards or away from the viewer; {@code roll} tilts it across the screen; {@code y} is in sixteenths of
+     * a block and {@code size} is the sword's height in blocks.
+     */
+    public static void setPose(boolean firstPerson, float roll, float yaw, float y, float size) {
         if (firstPerson) {
             firstRoll = roll;
+            firstYaw = yaw;
             firstY = y;
             firstSize = size;
             firstTransform = null;
         } else {
             thirdRoll = roll;
+            thirdYaw = yaw;
             thirdY = y;
             thirdSize = size;
             thirdTransform = null;
@@ -88,13 +96,14 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
 
     public static String describePose() {
         return String.format(java.util.Locale.ROOT,
-            "third: roll %.1f y %.2f size %.2f | first: roll %.1f y %.2f size %.2f",
-            thirdRoll, thirdY / 16.0F, thirdSize, firstRoll, firstY / 16.0F, firstSize);
+            "third: roll %.1f yaw %.1f y %.2f size %.2f | first: roll %.1f yaw %.1f y %.2f size %.2f",
+            thirdRoll, thirdYaw, thirdY / 16.0F, thirdSize,
+            firstRoll, firstYaw, firstY / 16.0F, firstSize);
     }
 
     private static ItemTransform thirdTransform() {
         if (thirdTransform == null) {
-            thirdTransform = new ItemTransform(new Vector3f(0.0F, 0.0F, thirdRoll),
+            thirdTransform = new ItemTransform(new Vector3f(0.0F, thirdYaw, thirdRoll),
                 new Vector3f(0.0F, thirdY / 16.0F, 0.5F / 16.0F), new Vector3f(0.85F, 0.85F, 0.85F));
         }
         return thirdTransform;
@@ -102,7 +111,7 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
 
     private static ItemTransform firstTransform() {
         if (firstTransform == null) {
-            firstTransform = new ItemTransform(new Vector3f(0.0F, 0.0F, firstRoll),
+            firstTransform = new ItemTransform(new Vector3f(0.0F, firstYaw, firstRoll),
                 new Vector3f(1.13F / 16.0F, firstY / 16.0F, 1.13F / 16.0F),
                 new Vector3f(0.68F, 0.68F, 0.68F));
         }

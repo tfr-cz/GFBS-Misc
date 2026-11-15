@@ -45,16 +45,18 @@ public final class CruciblePoseCommand {
     private static com.mojang.brigadier.builder.RequiredArgumentBuilder<
             net.minecraft.commands.CommandSourceStack, Float> poseArguments(boolean firstPerson) {
         return Commands.argument("roll", FloatArgumentType.floatArg(-360.0F, 360.0F))
-            .then(Commands.argument("y", FloatArgumentType.floatArg())
-                .then(Commands.argument("size", FloatArgumentType.floatArg(0.1F, 8.0F))
-                    .executes(context -> {
-                        float roll = FloatArgumentType.getFloat(context, "roll");
-                        float y = FloatArgumentType.getFloat(context, "y");
-                        float size = FloatArgumentType.getFloat(context, "size");
-                        CrucibleItemRenderer.setPose(firstPerson, roll, y * 16.0F, size);
-                        say(context.getSource().getPlayerOrException(), CrucibleItemRenderer.describePose());
-                        return 1;
-                    })));
+            .then(Commands.argument("yaw", FloatArgumentType.floatArg(-360.0F, 360.0F))
+                .then(Commands.argument("y", FloatArgumentType.floatArg())
+                    .then(Commands.argument("size", FloatArgumentType.floatArg(0.1F, 8.0F))
+                        .executes(context -> {
+                            float roll = FloatArgumentType.getFloat(context, "roll");
+                            float yaw = FloatArgumentType.getFloat(context, "yaw");
+                            float y = FloatArgumentType.getFloat(context, "y");
+                            float size = FloatArgumentType.getFloat(context, "size");
+                            CrucibleItemRenderer.setPose(firstPerson, roll, yaw, y * 16.0F, size);
+                            say(context.getSource().getPlayerOrException(), CrucibleItemRenderer.describePose());
+                            return 1;
+                        }))));
     }
 
     private static void say(net.minecraft.world.entity.player.Player player, String message) {
