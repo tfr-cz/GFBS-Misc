@@ -58,11 +58,12 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
      * blade faces whoever is looking at it), so the roll alone is kept.
      */
     private static final ItemTransform THIRD_PERSON = new ItemTransform(
-        new Vector3f(0.0F, 0.0F, 55.0F),
-        new Vector3f(0.0F, 4.0F / 16.0F, 0.5F / 16.0F),
+        new Vector3f(0.0F, 0.0F, 35.0F),
+        new Vector3f(0.0F, 1.6F / 16.0F, 0.5F / 16.0F),
         new Vector3f(0.85F, 0.85F, 0.85F));
+    /** The first-person hand is rotated the other way round, so the roll has to flip to tilt the blade the same way. */
     private static final ItemTransform FIRST_PERSON = new ItemTransform(
-        new Vector3f(0.0F, 0.0F, 25.0F),
+        new Vector3f(0.0F, 0.0F, -25.0F),
         new Vector3f(1.13F / 16.0F, 3.2F / 16.0F, 1.13F / 16.0F),
         new Vector3f(0.68F, 0.68F, 0.68F));
     private static final ItemTransform NONE = new ItemTransform(
@@ -149,8 +150,15 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
         int packedLight = flat ? LightTexture.FULL_BRIGHT : light;
         CrucibleModel.setBladePass(model, false);
         GltfRenderer.render(model, pose, buffers, packedLight, overlay);
-        CrucibleModel.setBladePass(model, true);
-        GltfRenderer.render(model, pose, buffers, LightTexture.FULL_BRIGHT, overlay);
+
+        // HBM only drew the blade when its GUARD_ROT bus was idle (`rot[2] == 0.0`, and that channel is 1 for the
+        // whole equip clip): hilt and folded guards are raised first, the blade appears once the fold is done.
+        // The flat views are exempt, like NTM's inventory pass, so the slot is never an empty handle.
+        boolean bladeVisible = flat || !ItemAnimations.isPlaying(CrucibleAnimations.GUARD_ROT);
+        if (bladeVisible) {
+            CrucibleModel.setBladePass(model, true);
+            GltfRenderer.render(model, pose, buffers, LightTexture.FULL_BRIGHT, overlay);
+        }
         pose.popPose();
     }
 }

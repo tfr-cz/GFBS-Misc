@@ -163,6 +163,22 @@ public final class CrucibleModel {
             }
         }
 
+        if (guards.isEmpty()) {
+            // An importer that groups by material would merge the two plates into one `guard` node; folding that
+            // is not exact (one pivot for both), but leaving the plates rigid would lose the whole equip clip.
+            for (int index = 0; index < asset.nodes().size(); index++) {
+                String name = asset.nodes().get(index).name().toLowerCase(java.util.Locale.ROOT);
+                if (!name.contains("guard")) {
+                    continue;
+                }
+                guards.add(index);
+                boolean left = !name.contains("right");
+                sides.add(left ? 0.5F : -0.5F);
+                signs.add(left ? -1.0F : 1.0F);
+                bases.add(captureLocalMatrix(model, index));
+            }
+        }
+
         bladeNodes = blade.stream().mapToInt(Integer::intValue).toArray();
         bodyNodes = body.stream().mapToInt(Integer::intValue).toArray();
         guardNodes = guards.stream().mapToInt(Integer::intValue).toArray();
@@ -171,8 +187,11 @@ public final class CrucibleModel {
         guardBase = bases.toArray(new Matrix4f[0]);
         bounds = total;
         instance = model;
-        LOGGER.info("Crucible mesh loaded: {} nodes ({} blade), bounds y {}..{}",
-            asset.nodes().size(), bladeNodes.length, total.minY(), total.maxY());
+        LOGGER.info("Crucible mesh loaded: {} nodes ({} blade, {} guard), bounds y {}..{}",
+            asset.nodes().size(), bladeNodes.length, guardNodes.length, total.minY(), total.maxY());
+        for (GltfNode node : asset.nodes()) {
+            LOGGER.info("  node {}", node.name());
+        }
     }
 
     /** The node's own local matrix, captured before any fold override is written over it. */
