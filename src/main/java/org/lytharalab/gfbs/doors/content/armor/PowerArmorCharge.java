@@ -57,11 +57,31 @@ public final class PowerArmorCharge {
         return clampCharge(tag.getLong(TAG));
     }
 
+    /** Writes logged so far, for the free diagnostic burst. */
+    private static int loggedWrites;
+
     public static void set(ItemStack stack, long charge) {
         if (!isPowerArmor(stack)) {
             return;
         }
-        stack.getOrCreateTag().putLong(TAG, clampCharge(charge));
+        long clamped = clampCharge(charge);
+        if (Boolean.getBoolean("gfbs.debug.charge") || loggedWrites < 120) {
+            loggedWrites++;
+            org.slf4j.LoggerFactory.getLogger("gfbs_doors").info(
+                "charge write: thread={} {} -> {} caller={}",
+                Thread.currentThread().getName(), get(stack), clamped, caller());
+        }
+        stack.getOrCreateTag().putLong(TAG, clamped);
+    }
+
+    private static String caller() {
+        return StackWalker.getInstance().walk(frames -> frames
+            .filter(frame -> !frame.getClassName().equals(PowerArmorCharge.class.getName()))
+            .limit(3)
+            .map(frame -> frame.getClassName().substring(frame.getClassName().lastIndexOf('.') + 1)
+                + "#" + frame.getMethodName())
+            .reduce((a, b) -> a + " <- " + b)
+            .orElse("?"));
     }
 
     /** Adds up to {@code amount}; returns how much actually went in (0 when already full). */

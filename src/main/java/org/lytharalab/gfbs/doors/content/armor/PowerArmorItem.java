@@ -104,7 +104,15 @@ public final class PowerArmorItem extends ArmorItem {
      */
     @Override
     public void setDamage(ItemStack stack, int damage) {
-        PowerArmorCharge.discharge(stack, (long) damage * PowerArmorCharge.DAMAGE_CONSUMPTION);
+        // hurt() hands over the *accumulated* damage (current + amount), not the increment: the item never stores
+        // damage because this override does not call super, so the stored value stays where it started and only
+        // the difference is this hit's worth. Charging the absolute value would bill a fresh hit for the whole
+        // history - which is exactly how a suit lost hundreds of thousands of charge to one scratch.
+        int current = stack.getDamageValue();
+        int increment = damage - current;
+        if (increment > 0) {
+            PowerArmorCharge.discharge(stack, (long) increment * PowerArmorCharge.DAMAGE_CONSUMPTION);
+        }
     }
 
     @Override
