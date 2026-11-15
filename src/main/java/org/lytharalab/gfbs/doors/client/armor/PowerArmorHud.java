@@ -40,6 +40,7 @@ public final class PowerArmorHud implements IGuiOverlay {
 
     private static final boolean DEBUG = Boolean.getBoolean("gfbs.debug.hud");
     private static long lastLogTick = Long.MIN_VALUE;
+    private static long[] lastLoggedCharges = new long[4];
 
     @Override
     public void render(ForgeGui gui, GuiGraphics graphics, float partialTick, int screenWidth, int screenHeight) {
@@ -74,7 +75,7 @@ public final class PowerArmorHud implements IGuiOverlay {
         gui.leftHeight += RESERVED_HEIGHT;
 
         if (DEBUG) {
-            logOnceASecond(player, armor, gui.leftHeight);
+            logWhenItChanges(player, armor, gui.leftHeight, baseline);
         }
     }
 
@@ -102,16 +103,28 @@ public final class PowerArmorHud implements IGuiOverlay {
         return left + INSET + Math.round((SEGMENT_WIDTH - INSET * 2) * clamped);
     }
 
-    private static void logOnceASecond(Player player, java.util.List<ItemStack> armor, int leftHeight) {
-        long now = player.level().getGameTime();
-        if (lastLogTick != Long.MIN_VALUE && now - lastLogTick < 20L) {
+    /**
+     * Logs the moment a row's value changes, not once a second: a per-tick oscillation between two values would
+     * average out in a periodic sample but shows up here as an alternating sequence.
+     */
+    private static void logWhenItChanges(Player player, java.util.List<ItemStack> armor, int leftHeight, int baseline) {
+        long[] charges = new long[armor.size()];
+        boolean changed = false;
+        for (int i = 0; i < armor.size(); i++) {
+            ItemStack piece = armor.get(i);
+            charges[i] = PowerArmorCharge.isPowerArmor(piece) ? PowerArmorCharge.get(piece) : -1L;
+            if (i < lastLoggedCharges.length && charges[i] != lastLoggedCharges[i]) {
+                changed = true;
+            }
+        }
+        if (!changed) {
             return;
         }
-        lastLogTick = now;
-        StringBuilder builder = new StringBuilder("power hud: leftHeight=").append(leftHeight).append(" charges=");
-        for (ItemStack piece : armor) {
-            builder.append(PowerArmorCharge.isPowerArmor(piece) ? PowerArmorCharge.get(piece) : -1L).append(' ');
-        }
-        org.slf4j.LoggerFactory.getLogger("gfbs_doors").info(builder.toString());
+        lastLoggedCharges = charges;
+        org.slf4j.LoggerFactory.getLogger("gfbs_doors").info(
+            "power hud: tick={} baseline={} leftHeight={} charges={} {} {} {} {}",
+            player.level().getGameTime(), baseline, leftHeight,
+            charges.length > 0 ? charges[0] : -1L, charges.length > 1 ? charges[1] : -1L,
+            charges.length > 2 ? charges[2] : -1L, charges.length > 3 ? charges[3] : -1L);
     }
 }
