@@ -47,24 +47,34 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
     private static final float SWING_LUNGE = 0.4F;
 
     /**
-     * Held pose, tuned against NTM screenshots: the vanilla {@code handheld} transform without its -90 degree yaw
-     * (that yaw turns a flat sprite edge-on, which is not what the Crucible does) and with the roll, height and size
-     * adjustable at runtime through {@code /gfbs_crucible} so they can be dialled in without a rebuild.
+     * Held pose, dialled in game against NTM's own screenshots.
      *
-     * <p>{@code y} is in sixteenths of a block, like the JSON, and {@code size} is the sword's height in blocks. The
-     * current numbers were dialled in game with {@code /gfbs_crucible} and are the ones that look right; they are
-     * much larger than a sword on purpose, because NTM's Crucible is a three-block slab of a blade.</p>
+     * <p>This is vanilla's {@code handheld} transform without its -90 degree yaw - that yaw turns a flat sprite
+     * edge-on, and the Crucible is meant to show its face - plus two angles of our own. {@code yaw} spins the blade
+     * about its own length and decides whether the viewer sees the flat or the edge; {@code roll} tilts it across the
+     * screen. {@code y} is in sixteenths of a block like the JSON, and {@code size} is the drawn height in blocks.</p>
+     *
+     * <p>The sizes are far past sword-sized on purpose: NTM's Crucible is a three-block slab of a blade, and that is
+     * most of what makes it look like itself. The yaw sign differs between the views because the first-person hand is
+     * mirrored relative to the third-person one.</p>
      */
-    private static float thirdRoll = -40.0F;
-    private static float thirdYaw = -90.0F;
-    private static float thirdY = 1.6F;
-    private static float thirdSize = 3.0F;
-    private static float firstRoll = -10.0F;
-    private static float firstYaw = -90.0F;
-    private static float firstY = -4.8F;
-    private static float firstSize = 2.5F;
-    private static ItemTransform thirdTransform;
-    private static ItemTransform firstTransform;
+    private static final float THIRD_ROLL = -40.0F;
+    private static final float THIRD_YAW = -90.0F;
+    private static final float THIRD_Y = 1.6F;
+    private static final float THIRD_SIZE = 3.0F;
+    private static final float FIRST_ROLL = -10.0F;
+    private static final float FIRST_YAW = -90.0F;
+    private static final float FIRST_Y = -4.8F;
+    private static final float FIRST_SIZE = 2.5F;
+
+    private static final ItemTransform THIRD_PERSON = new ItemTransform(
+        new Vector3f(0.0F, THIRD_YAW, THIRD_ROLL),
+        new Vector3f(0.0F, THIRD_Y / 16.0F, 0.5F / 16.0F),
+        new Vector3f(0.85F, 0.85F, 0.85F));
+    private static final ItemTransform FIRST_PERSON = new ItemTransform(
+        new Vector3f(0.0F, FIRST_YAW, FIRST_ROLL),
+        new Vector3f(1.13F / 16.0F, FIRST_Y / 16.0F, 1.13F / 16.0F),
+        new Vector3f(0.68F, 0.68F, 0.68F));
     private static final ItemTransform NONE = new ItemTransform(
         new Vector3f(0.0F, 0.0F, 0.0F),
         new Vector3f(0.0F, 0.0F, 0.0F),
@@ -72,68 +82,23 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
 
     private static CrucibleItemRenderer instance;
 
-    /**
-     * Used by {@code /gfbs_crucible}. {@code yaw} spins the blade around its own length, which is the knob that turns
-     * the flat towards or away from the viewer; {@code roll} tilts it across the screen; {@code y} is in sixteenths of
-     * a block and {@code size} is the sword's height in blocks.
-     */
-    public static void setPose(boolean firstPerson, float roll, float yaw, float y, float size) {
-        if (firstPerson) {
-            firstRoll = roll;
-            firstYaw = yaw;
-            firstY = y;
-            firstSize = size;
-            firstTransform = null;
-        } else {
-            thirdRoll = roll;
-            thirdYaw = yaw;
-            thirdY = y;
-            thirdSize = size;
-            thirdTransform = null;
-        }
-    }
-
-    public static String describePose() {
-        return String.format(java.util.Locale.ROOT,
-            "third: roll %.1f yaw %.1f y %.2f size %.2f | first: roll %.1f yaw %.1f y %.2f size %.2f",
-            thirdRoll, thirdYaw, thirdY / 16.0F, thirdSize,
-            firstRoll, firstYaw, firstY / 16.0F, firstSize);
-    }
-
-    private static ItemTransform thirdTransform() {
-        if (thirdTransform == null) {
-            thirdTransform = new ItemTransform(new Vector3f(0.0F, thirdYaw, thirdRoll),
-                new Vector3f(0.0F, thirdY / 16.0F, 0.5F / 16.0F), new Vector3f(0.85F, 0.85F, 0.85F));
-        }
-        return thirdTransform;
-    }
-
-    private static ItemTransform firstTransform() {
-        if (firstTransform == null) {
-            firstTransform = new ItemTransform(new Vector3f(0.0F, firstYaw, firstRoll),
-                new Vector3f(1.13F / 16.0F, firstY / 16.0F, 1.13F / 16.0F),
-                new Vector3f(0.68F, 0.68F, 0.68F));
-        }
-        return firstTransform;
-    }
-
     private static float spriteHeight(ItemDisplayContext context) {
         return switch (context) {
             case GUI -> GUI_HEIGHT;
             case GROUND, FIXED -> GROUND_HEIGHT;
-            case FIRST_PERSON_LEFT_HAND, FIRST_PERSON_RIGHT_HAND -> firstSize;
-            default -> thirdSize;
+            case FIRST_PERSON_LEFT_HAND, FIRST_PERSON_RIGHT_HAND -> FIRST_SIZE;
+            default -> THIRD_SIZE;
         };
     }
 
     private static ItemTransform transformFor(ItemDisplayContext context) {
         if (context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND
             || context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND) {
-            return firstTransform();
+            return FIRST_PERSON;
         }
         if (context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND
             || context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
-            return thirdTransform();
+            return THIRD_PERSON;
         }
         return NONE;
     }
