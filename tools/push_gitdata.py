@@ -121,7 +121,8 @@ def main() -> int:
         print(f"  blob {sha[:10]} {path}")
 
     # Deepest trees first: a tree may only reference trees that already exist.
-    for sha, path in sorted(kinds["tree"], key=lambda kv: -kv[1].count("/")):
+    # The root tree has an empty path, so it must sort after "src" and friends.
+    for sha, path in sorted(kinds["tree"], key=lambda kv: depth(kv[1]), reverse=True):
         entries = []
         for line in git("ls-tree", sha).splitlines():
             meta, _, name = line.partition("\t")
@@ -177,6 +178,11 @@ def main() -> int:
     )
     print(f"pushed: {slug} {args.branch} is now {local[:7]}")
     return 0
+
+
+def depth(path: str) -> int:
+    """Slash count, with the root tree (-1) sorting below every real path."""
+    return -1 if not path else path.count("/")
 
 
 def split_ident(value: str) -> dict[str, str]:
