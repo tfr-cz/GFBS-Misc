@@ -38,11 +38,8 @@ import org.lytharalab.gfbs.gltf.api.model.GltfBounds;
 @OnlyIn(Dist.CLIENT)
 public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer {
     /**
-     * How tall the sword is drawn, in blocks - 1.0 would be exactly a full 16x16 sprite.
-     *
-     * <p>HBM's Crucible is not sword-sized: in NTM it takes up most of the right half of the first-person view and
-     * reaches well above the player's head in third person, which is roughly 1.8 blocks of blade. The inventory and
-     * the ground keep it small enough to fit where it is drawn.</p>
+     * How tall the drawn model is for the static views, in blocks - 1.0 would be exactly a full 16x16 sprite. The
+     * held sizes live with the pose instead, because they are part of the same tuning.
      */
     private static final float GUI_HEIGHT = 0.95F;
     private static final float GROUND_HEIGHT = 0.55F;
@@ -54,16 +51,18 @@ public final class CrucibleItemRenderer extends BlockEntityWithoutLevelRenderer 
      * (that yaw turns a flat sprite edge-on, which is not what the Crucible does) and with the roll, height and size
      * adjustable at runtime through {@code /gfbs_crucible} so they can be dialled in without a rebuild.
      *
-     * <p>{@code y} is in sixteenths of a block, like the JSON, and {@code size} is the sword's height in blocks.</p>
+     * <p>{@code y} is in sixteenths of a block, like the JSON, and {@code size} is the sword's height in blocks. The
+     * current numbers were dialled in game with {@code /gfbs_crucible} and are the ones that look right; they are
+     * much larger than a sword on purpose, because NTM's Crucible is a three-block slab of a blade.</p>
      */
-    private static float thirdRoll = 20.0F;
-    private static float thirdYaw = 0.0F;
+    private static float thirdRoll = -40.0F;
+    private static float thirdYaw = 90.0F;
     private static float thirdY = 1.6F;
-    private static float thirdSize = 1.8F;
-    private static float firstRoll = -15.0F;
-    private static float firstYaw = 0.0F;
-    private static float firstY = 3.2F;
-    private static float firstSize = 1.5F;
+    private static float thirdSize = 3.0F;
+    private static float firstRoll = -10.0F;
+    private static float firstYaw = -90.0F;
+    private static float firstY = -4.8F;
+    private static float firstSize = 2.5F;
     private static ItemTransform thirdTransform;
     private static ItemTransform firstTransform;
     private static final ItemTransform NONE = new ItemTransform(
